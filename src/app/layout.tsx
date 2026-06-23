@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import { GameProvider } from "@/context/GameContext";
 import { ErrorBoundary } from "@/components/error/ErrorBoundary";
+import SessionProvider from "@/components/auth/SessionProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -32,9 +33,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${poppins.variable} font-sans antialiased bg-bg-canvas`}
       >
-        <ErrorBoundary>
-          <GameProvider>{children}</GameProvider>
-        </ErrorBoundary>
+        <SessionProvider>
+          <ErrorBoundary>
+            <GameProvider>{children}</GameProvider>
+          </ErrorBoundary>
+        </SessionProvider>
       </body>
     </html>
   );
