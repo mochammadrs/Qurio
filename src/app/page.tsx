@@ -6,6 +6,8 @@ import { Header } from "@/components/layout/Header";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
 import { BookOpen, History, Globe, Sparkles, Target, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { useGame } from "@/context/GameContext";
 import { Category } from "@/context/types";
 
@@ -48,6 +50,7 @@ const categories = [
 export default function Home() {
   const router = useRouter();
   const { startGame } = useGame();
+  const { data: session } = useSession();
 
   const handleCategorySelect = (categoryId: Category) => {
     startGame(categoryId);
@@ -84,12 +87,23 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Category Selection Grid */}
-        <div className="mb-16">
-          <h2 className="text-4xl font-heading font-bold text-gray-900 mb-3 text-center">
-            Pilih Kategori 🎯
-          </h2>
-          <p className="text-center text-gray-600 mb-10">Pilih topik favoritmu dan mulai tantangan!</p>
+        {/* Dashboard Link - Conditional */}
+         {session && (
+           <div className="mb-8 flex justify-center">
+             <Link href="/dashboard">
+               <Button variant="secondary" size="md">
+                 Dashboard
+               </Button>
+             </Link>
+           </div>
+         )}
+
+         {/* Category Selection Grid */}
+         <div className="mb-16">
+           <h2 className="text-4xl font-heading font-bold text-gray-900 mb-3 text-center">
+             Pilih Kategori 🎯
+           </h2>
+           <p className="text-center text-gray-600 mb-10">Pilih topik favoritmu dan mulai tantangan!</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {categories.map((category, index) => {
               const Icon = category.icon;

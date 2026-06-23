@@ -22,6 +22,9 @@ const initialState: GameState = {
   answers: [],
   isGameActive: false,
   isGameFinished: false,
+  isSavingScore: false,
+  saveError: null,
+  categoryId: null,
 };
 
 export function GameProvider({ children }: { children: React.ReactNode }) {
@@ -51,7 +54,23 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       answers: [],
       isGameActive: true,
       isGameFinished: false,
+      isSavingScore: false,
+      saveError: null,
+      categoryId: null,
     });
+
+    // Fetch categoryId untuk score saving (non-blocking)
+    fetch("/api/categories")
+      .then((res) => res.json())
+      .then((data) => {
+        const found = data.categories?.find(
+          (c: { slug: string }) => c.slug === category,
+        );
+        if (found) {
+          setGameState((prev) => ({ ...prev, categoryId: found.id }));
+        }
+      })
+      .catch(() => {});
   }, []);
 
   /**
@@ -76,29 +95,76 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     }));
   }, [gameState.isGameActive, gameState.isGameFinished, gameState.questions, gameState.currentQuestionIndex]);
 
-  /**
-   * Next question atau finish game
-   */
+  const saveScoreToDatabase = useCallback(async () => {
+    const { categoryId, questions, answers, score } = gameState;
+    if (!categoryId) return;
+
+    setGameState((prev) => ({ ...prev, isSavingScore: true, saveError: null }));
+
+    const totalQuestions = questions.length;
+    const correctAnswers = answers.filter((a) => a.isCorrect).length;
+    const wrongAnswers = totalQuestions - correctAnswers;
+    const percentage = (score / (totalQuestions * 10)) * 100;
+
+    let grade: "A" | "B" | "C";
+    if (percentage >= 80) grade = "A";
+    else if (percentage >= 60) grade = "B";
+    else grade = "C";
+
+    try {
+      const res = await fetch("/api/scores", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          categoryId,
+          score,
+          totalQuestions,
+          correctAnswers,
+          wrongAnswers,
+          percentage,
+          grade,
+        }),
+      });
+
+      if (!res.ok) {
+        setGameState((prev) => ({
+          ...prev,
+          isSavingScore: false,
+          saveError: "Failed to save score",
+        }));
+        return;
+      }
+
+      setGameState((prev) => ({ ...prev, isSavingScore: false }));
+    } catch {
+      setGameState((prev) => ({
+        ...prev,
+        isSavingScore: false,
+        saveError: "Failed to save score",
+      }));
+    }
+  }, [gameState]);
+
   const nextQuestion = useCallback(() => {
     if (!gameState.isGameActive) return;
 
     const isLastQuestion = gameState.currentQuestionIndex >= gameState.questions.length - 1;
 
     if (isLastQuestion) {
-      // Finish game
       setGameState((prev) => ({
         ...prev,
         isGameActive: false,
         isGameFinished: true,
       }));
+
+      saveScoreToDatabase();
     } else {
-      // Move to next question
       setGameState((prev) => ({
         ...prev,
         currentQuestionIndex: prev.currentQuestionIndex + 1,
       }));
     }
-  }, [gameState.isGameActive, gameState.currentQuestionIndex, gameState.questions.length]);
+  }, [gameState.isGameActive, gameState.currentQuestionIndex, gameState.questions.length, saveScoreToDatabase]);
 
   /**
    * Reset game to initial state

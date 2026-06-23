@@ -20,6 +20,9 @@ export interface GameState {
   answers: UserAnswer[];
   isGameActive: boolean;
   isGameFinished: boolean;
+  isSavingScore: boolean;
+  saveError: string | null;
+  categoryId: string | null;
 }
 
 export interface UserAnswer {

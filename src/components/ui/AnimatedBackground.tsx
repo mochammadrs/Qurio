@@ -8,7 +8,7 @@ interface BubbleConfig {
 }
 
 interface AnimatedBackgroundProps {
-  variant?: 'home' | 'play' | 'result';
+  variant?: 'home' | 'play' | 'result' | 'dashboard';
 }
 
 const bubbleConfigs: Record<string, BubbleConfig[]> = {
@@ -28,6 +28,12 @@ const bubbleConfigs: Record<string, BubbleConfig[]> = {
     { size: 'w-80 h-80', position: 'bottom-20 right-20', color: 'bg-pink-200/30', animation: 'animate-float-delayed' },
     { size: 'w-64 h-64', position: 'top-1/2 right-10', color: 'bg-blue-200/30', animation: 'animate-float-slow' },
   ],
+  dashboard: [
+    { size: 'w-80 h-80', position: 'top-10 right-10', color: 'bg-purple-200/30', animation: 'animate-float' },
+    { size: 'w-72 h-72', position: 'bottom-20 left-10', color: 'bg-blue-200/30', animation: 'animate-float-delayed' },
+    { size: 'w-64 h-64', position: 'top-1/3 left-1/4', color: 'bg-indigo-200/30', animation: 'animate-float-slow' },
+    { size: 'w-48 h-48', position: 'bottom-1/3 right-1/4', color: 'bg-emerald-200/30', animation: 'animate-float' },
+  ],
 };
 
 const decorativeShapes: Record<string, Array<{ size: string; position: string; shape: string; animation: string }>> = {
@@ -38,6 +44,10 @@ const decorativeShapes: Record<string, Array<{ size: string; position: string; s
   ],
   play: [],
   result: [],
+  dashboard: [
+    { size: 'w-20 h-20', position: 'top-1/4 right-1/4', shape: 'border-4 border-purple-300/40 rounded-xl rotate-12', animation: 'animate-spin-slow' },
+    { size: 'w-28 h-28', position: 'bottom-1/4 left-1/3', shape: 'border-4 border-blue-300/40 rounded-full', animation: 'animate-pulse-slow' },
+  ],
 };
 
 export function AnimatedBackground({ variant = 'home' }: AnimatedBackgroundProps) {

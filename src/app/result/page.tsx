@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import confetti from "canvas-confetti";
 import { Header } from "@/components/layout/Header";
 import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
@@ -188,26 +189,35 @@ export default function ResultPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-              <Button
-                variant="primary"
-                size="md"
-                onClick={handlePlayAgain}
-                className="flex items-center justify-center gap-2"
-              >
-                <RotateCcw className="w-4 h-4" />
-                <span className="font-semibold">Main Lagi</span>
-              </Button>
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={handleGoHome}
-                className="flex items-center justify-center gap-2 bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50"
-              >
-                <Home className="w-4 h-4" />
-                <span className="font-semibold">Ke Beranda</span>
-              </Button>
-            </div>
+             <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+               <Button
+                 variant="primary"
+                 size="md"
+                 onClick={handlePlayAgain}
+                 className="flex items-center justify-center gap-2"
+               >
+                 <RotateCcw className="w-4 h-4" />
+                 <span className="font-semibold">Main Lagi</span>
+               </Button>
+               <Button
+                 variant="secondary"
+                 size="md"
+                 onClick={handleGoHome}
+                 className="flex items-center justify-center gap-2 bg-white border-2 border-gray-300 text-gray-700 hover:bg-gray-50"
+               >
+                 <Home className="w-4 h-4" />
+                 <span className="font-semibold">Ke Beranda</span>
+               </Button>
+               <Link href="/dashboard">
+                 <Button
+                   variant="secondary"
+                   size="md"
+                   className="flex items-center justify-center gap-2"
+                 >
+                   <span className="font-semibold">Lihat Dashboard</span>
+                 </Button>
+               </Link>
+             </div>
           </div>
         </Card>
 
