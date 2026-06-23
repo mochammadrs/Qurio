@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/layout/Header";
+import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
 import { QuestionCard } from "@/components/game/QuestionCard";
 import { ScoreBoard } from "@/components/game/ScoreBoard";
 import { useQuizEngine } from "@/hooks/useQuizEngine";
@@ -54,12 +55,7 @@ export default function PlayPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-blue-50 relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 right-10 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-20 left-10 w-80 h-80 bg-indigo-200/30 rounded-full blur-3xl animate-float-delayed" />
-        <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-purple-200/30 rounded-full blur-3xl animate-float-slow" />
-      </div>
+      <AnimatedBackground variant="play" />
       
       <Header />
 

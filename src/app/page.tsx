@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Header } from "@/components/layout/Header";
+import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
 import { BookOpen, History, Globe, Sparkles, Target, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useGame } from "@/context/GameContext";
@@ -55,19 +56,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating Circles */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200/30 rounded-full blur-3xl animate-float" />
-        <div className="absolute top-40 right-20 w-96 h-96 bg-purple-200/30 rounded-full blur-3xl animate-float-delayed" />
-        <div className="absolute bottom-20 left-1/4 w-64 h-64 bg-emerald-200/30 rounded-full blur-3xl animate-float-slow" />
-        <div className="absolute bottom-40 right-1/3 w-80 h-80 bg-amber-200/30 rounded-full blur-3xl animate-float" />
-        
-        {/* Geometric Shapes */}
-        <div className="absolute top-1/4 right-10 w-24 h-24 border-4 border-blue-300/40 rounded-xl rotate-12 animate-spin-slow" />
-        <div className="absolute bottom-1/3 left-20 w-32 h-32 border-4 border-purple-300/40 rounded-full animate-pulse-slow" />
-        <div className="absolute top-1/2 right-1/4 w-20 h-20 border-4 border-emerald-300/40 rotate-45 animate-bounce-slow" />
-      </div>
+      <AnimatedBackground variant="home" />
       
       <Header />
       

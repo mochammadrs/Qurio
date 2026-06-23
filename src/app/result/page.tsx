@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import confetti from "canvas-confetti";
 import { Header } from "@/components/layout/Header";
+import { AnimatedBackground } from "@/components/ui/AnimatedBackground";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Trophy, Target, TrendingUp, Home, RotateCcw, Sparkles } from "lucide-react";
@@ -79,12 +80,7 @@ export default function ResultPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-purple-200/30 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-20 right-20 w-80 h-80 bg-pink-200/30 rounded-full blur-3xl animate-float-delayed" />
-        <div className="absolute top-1/2 right-10 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl animate-float-slow" />
-      </div>
+      <AnimatedBackground variant="result" />
       
       <Header />
 
