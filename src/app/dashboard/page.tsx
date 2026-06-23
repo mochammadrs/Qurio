@@ -8,59 +8,41 @@ import { Statistics, QuizResult } from "@/components/dashboard/Statistics";
 import { QuizHistory } from "@/components/dashboard/QuizHistory";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { BookOpen, ArrowRight, LogOut } from "lucide-react";
-
-const mockHistory: QuizResult[] = [
-  {
-    id: "1",
-    category: "Agama",
-    score: 8,
-    totalQuestions: 10,
-    percentage: 80,
-    grade: "A",
-    completedAt: new Date("2025-06-20T10:30:00"),
-  },
-  {
-    id: "2",
-    category: "Sejarah",
-    score: 7,
-    totalQuestions: 10,
-    percentage: 70,
-    grade: "B",
-    completedAt: new Date("2025-06-18T14:15:00"),
-  },
-  {
-    id: "3",
-    category: "Pengetahuan Umum",
-    score: 9,
-    totalQuestions: 10,
-    percentage: 90,
-    grade: "A",
-    completedAt: new Date("2025-06-15T09:00:00"),
-  },
-  {
-    id: "4",
-    category: "Agama",
-    score: 6,
-    totalQuestions: 10,
-    percentage: 60,
-    grade: "B",
-    completedAt: new Date("2025-06-10T16:45:00"),
-  },
-  {
-    id: "5",
-    category: "Sejarah",
-    score: 5,
-    totalQuestions: 10,
-    percentage: 50,
-    grade: "C",
-    completedAt: new Date("2025-06-05T11:20:00"),
-  },
-];
+import { useEffect, useState } from "react";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [history, setHistory] = useState<QuizResult[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (session) {
+      fetch("/api/scores")
+        .then((res) => res.json())
+        .then((data) => {
+          const formattedHistory: QuizResult[] = data.scores.map((score: any) => ({
+            id: score.id,
+            category: score.category.name,
+            score: score.correctAnswers,
+            totalQuestions: score.totalQuestions,
+            percentage: score.percentage,
+            grade: score.grade,
+            completedAt: new Date(score.completedAt),
+          }));
+          setHistory(formattedHistory);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch scores:", err);
+          setError("Gagal memuat data quiz");
+          setLoading(false);
+        });
+    }
+  }, [session]);
 
   if (status === "loading") {
     return (
@@ -111,22 +93,46 @@ export default function DashboardPage() {
                  Selamat datang kembali! Lihat progres belajarmu di sini.
                </p>
              </div>
-             <Button
-               variant="danger"
-               size="md"
-               onClick={() => signOut({ callbackUrl: "/" })}
-               className="flex items-center gap-2"
-             >
-               <LogOut className="w-4 h-4" />
-               <span className="font-semibold">Keluar</span>
-             </Button>
+             <div className="flex gap-3">
+               {session.user.role === "admin" && (
+                 <Link href="/admin/questions">
+                   <Button variant="primary" size="md">
+                     Admin Panel
+                   </Button>
+                 </Link>
+               )}
+               <Button
+                 variant="danger"
+                 size="md"
+                 onClick={() => signOut({ callbackUrl: "/" })}
+                 className="flex items-center gap-2"
+               >
+                 <LogOut className="w-4 h-4" />
+                 <span className="font-semibold">Keluar</span>
+               </Button>
+             </div>
            </div>
 
            <ProfileCard />
 
-           <Statistics history={mockHistory} />
-
-           <QuizHistory history={mockHistory} />
+           {loading ? (
+             <div className="text-center py-12">
+               <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+               <p className="text-gray-600">Memuat data quiz...</p>
+             </div>
+           ) : error ? (
+             <div className="text-center py-12">
+               <p className="text-red-600 mb-4">{error}</p>
+               <Button variant="secondary" onClick={() => window.location.reload()}>
+                 Coba Lagi
+               </Button>
+             </div>
+           ) : (
+             <>
+               <Statistics history={history} />
+               <QuizHistory history={history} />
+             </>
+           )}
 
            <div className="flex justify-center pt-4 pb-8">
              <Button

@@ -89,12 +89,19 @@ export default function Home() {
 
         {/* Dashboard Link - Conditional */}
          {session && (
-           <div className="mb-8 flex justify-center">
+           <div className="mb-8 flex justify-center gap-3">
              <Link href="/dashboard">
                <Button variant="secondary" size="md">
                  Dashboard
                </Button>
              </Link>
+             {session.user.role === "admin" && (
+               <Link href="/admin/questions">
+                 <Button variant="primary" size="md">
+                   Admin Panel
+                 </Button>
+               </Link>
+             )}
            </div>
          )}
 
