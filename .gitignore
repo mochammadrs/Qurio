@@ -89,3 +89,5 @@ pnpm-lock.yaml
 *.md
 !README.md
 !MVP_QURIO_FINAL.md
+!CHANGELOG.md
+!QURIO_DEVELOPMENT_ROADMAP.md

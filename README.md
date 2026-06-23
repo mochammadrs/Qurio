@@ -2,13 +2,13 @@
 
 > Platform kuis interaktif yang mengubah proses belajar menjadi pengalaman yang menyenangkan dan engaging.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Version](https://img.shields.io/badge/version-1.1.0-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-16+-black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 ![Tailwind](https://img.shields.io/badge/Tailwind-4.0-38bdf8)
 ![Status](https://img.shields.io/badge/status-Production_Ready-success)
 
-**Qurio** adalah aplikasi web quiz modern yang dirancang untuk membuat pembelajaran menjadi lebih interaktif dan menyenangkan. Dengan 60 soal berkualitas di 3 kategori berbeda, sistem grading yang fair, dan sound effects yang immersive, Qurio memberikan pengalaman kuis yang complete.
+**Qurio** adalah aplikasi web quiz modern dengan sistem autentikasi dan persistensi data yang lengkap. Dengan 60 soal berkualitas di 3 kategori berbeda, sistem grading yang fair, user dashboard untuk tracking progres, dan OAuth authentication, Qurio memberikan pengalaman kuis yang complete dan scalable.
 
 ---
 
@@ -17,6 +17,9 @@
 ### Core Features
 - 🎯 **Interactive Quiz System:** 10 pertanyaan per sesi dari pool 60 soal berkualitas
 - 📚 **3 Kategori Utama:** Agama, Sejarah, Pengetahuan Umum (masing-masing 20 soal)
+- 🔐 **User Authentication:** OAuth login dengan Google dan GitHub
+- 👤 **User Dashboard:** Profile, statistics, dan quiz history tracking
+- 💾 **Data Persistence:** Scores tersimpan di database (Neon PostgreSQL)
 - 🎨 **Modern UI Design:** Clean dan playful dengan animated elements
 - 📱 **Fully Responsive:** Mobile-first design, optimal di semua devices
 - ⚡ **Lightning Fast:** Next.js 16 dengan Turbopack untuk performa maksimal
@@ -24,15 +27,21 @@
 
 ### User Experience
 - 🏆 **Grade System:** Sistem grading A/B/C dengan visual feedback
+- 📊 **Progress Tracking:** Dashboard dengan statistics (total games, avg score, best score)
+- 📜 **Quiz History:** Riwayat quiz lengkap dengan tanggal dan grade
 - 🎵 **Sound Effects:** Web Audio API untuk feedback audio yang immersive
 - 🎉 **Celebration Effects:** Confetti animation untuk high scores (≥80%)
 - 💚 **Instant Feedback:** Real-time validation dengan color-coded indicators
-- 📊 **Score Tracking:** Real-time score display dengan animated counter
 - 🔀 **Smart Randomization:** Questions & options di-shuffle setiap game
+- 🔒 **Protected Routes:** Content hanya bisa diakses setelah login
 
 ### Technical Highlights
 - ✅ **Type Safety:** Full TypeScript dengan strict mode
-- ✅ **Data Validation:** Zod schema validation untuk runtime safety
+- ✅ **Database:** Prisma ORM dengan Neon PostgreSQL
+- ✅ **Authentication:** NextAuth v5 dengan OAuth providers
+- ✅ **Testing:** Vitest + React Testing Library (12 tests)
+- ✅ **Error Handling:** Error Boundary untuk graceful error recovery
+- ✅ **Accessibility:** WCAG AA compliant (keyboard nav, ARIA labels)
 - ✅ **State Management:** React Context API untuk global state
 - ✅ **Performance:** Server & Client Components optimization
 - ✅ **Code Quality:** ESLint + Prettier configuration
@@ -46,28 +55,87 @@
 - **Node.js** 18.x atau lebih tinggi (recommended: 20.x)
 - **npm**, **yarn**, atau **pnpm** package manager
 - **Git** untuk version control
+- **Neon Account** untuk PostgreSQL database (gratis)
+- **Google Cloud Console** untuk OAuth credentials
+- **GitHub Account** untuk OAuth credentials
 
 ### Installation
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/qurio.git
+git clone https://github.com/mochammadrs/qurio.git
 cd qurio/qurio-web
 
 # Install dependencies
 npm install
+```
 
-# Run development server
+### Environment Setup
+
+1. **Copy environment template:**
+```bash
+cp .env.example .env
+```
+
+2. **Setup Neon PostgreSQL:**
+   - Buat account di [Neon](https://neon.tech)
+   - Create new project (pilih Singapore region)
+   - Copy connection string dari dashboard
+   - Paste ke `.env` sebagai `DATABASE_URL` dan `DIRECT_URL`
+
+3. **Setup OAuth Providers:**
+   
+   **Google OAuth:**
+   - Buka [Google Cloud Console](https://console.cloud.google.com/)
+   - Create project → Enable OAuth Consent Screen
+   - Create OAuth 2.0 Client ID (Web application)
+   - Add callback: `http://localhost:3000/api/auth/callback/google`
+   - Copy Client ID dan Secret ke `.env`
+
+   **GitHub OAuth:**
+   - Buka [GitHub Developer Settings](https://github.com/settings/developers)
+   - Register new OAuth App
+   - Add callback: `http://localhost:3000/api/auth/callback/github`
+   - Copy Client ID dan Secret ke `.env`
+
+4. **Generate NextAuth Secret:**
+```bash
+npx auth secret
+```
+Copy output ke `.env` sebagai `NEXTAUTH_SECRET`
+
+5. **Setup Database:**
+```bash
+# Push Prisma schema to database
+npx prisma db push
+
+# Seed database dengan 60 questions
+npx prisma db seed
+
+# (Optional) Open Prisma Studio untuk view data
+npx prisma studio
+```
+
+6. **Run Development Server:**
+```bash
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) dengan browser untuk melihat aplikasi.
+
+📚 **Detailed Setup Guide:** Lihat `docs/BACKEND_SETUP.md` untuk step-by-step instructions.
 
 ### Available Scripts
 
 ```bash
 # Development mode dengan hot reload
 npm run dev
+
+# Run tests
+npm test
+
+# Run tests dengan UI
+npm run test:ui
 
 # Build untuk production
 npm run build
@@ -80,6 +148,12 @@ npm run type-check
 
 # Linting
 npm run lint
+
+# Database commands
+npx prisma studio      # Open database GUI
+npx prisma db push     # Push schema changes
+npx prisma db seed     # Seed database
+npx prisma generate    # Generate Prisma Client
 ```
 
 ---
@@ -88,19 +162,46 @@ npm run lint
 
 ```
 qurio-web/
+├── prisma/
+│   ├── schema.prisma          # Database schema (8 models)
+│   └── seed.ts               # Database seed script
+│
+├── docs/
+│   └── BACKEND_SETUP.md      # Backend setup guide
+│
 ├── src/
-│   ├── app/                    # Next.js App Router
-│   │   ├── layout.tsx         # Root layout
-│   │   ├── page.tsx           # Landing page
-│   │   ├── play/page.tsx      # Quiz interface
-│   │   └── result/page.tsx    # Result page
+│   ├── app/                  # Next.js App Router
+│   │   ├── (auth)/
+│   │   │   └── login/        # Login page
+│   │   ├── api/              # API Routes
+│   │   │   ├── auth/         # NextAuth endpoints
+│   │   │   ├── categories/   # Category API
+│   │   │   └── scores/       # Score API
+│   │   ├── dashboard/        # User dashboard
+│   │   ├── play/             # Quiz interface
+│   │   ├── result/           # Result page
+│   │   └── layout.tsx        # Root layout
 │   │
-│   ├── components/            # React components
+│   ├── components/
+│   │   ├── auth/             # Auth components
+│   │   │   └── SessionProvider.tsx
+│   │   ├── dashboard/        # Dashboard components
+│   │   │   ├── ProfileCard.tsx
+│   │   │   ├── QuizHistory.tsx
+│   │   │   └── Statistics.tsx
+│   │   ├── error/            # Error handling
+│   │   │   ├── ErrorBoundary.tsx
+│   │   │   └── ErrorFallback.tsx
 │   │   ├── game/             # Game components
-│   │   ├── layout/           # Layout components
+│   │   │   ├── QuestionCard.tsx
+│   │   │   └── ScoreBoard.tsx
 │   │   └── ui/               # UI components
+│   │       ├── AnimatedBackground.tsx
+│   │       └── Button.tsx
 │   │
 │   ├── context/              # React Context
+│   │   ├── __tests__/        # Context tests
+│   │   │   └── GameContext.test.tsx
 │   │   ├── GameContext.tsx   # Game state
 │   │   └── types.ts          # Context types
 │   │
@@ -111,11 +212,22 @@ qurio-web/
 │   │   ├── useQuizEngine.ts  # Quiz logic
 │   │   └── useSoundEffects.ts # Sound system
 │   │
+│   ├── lib/
+│   │   └── prisma.ts         # Prisma client singleton
+│   │
+│   ├── test/
+│   │   └── setup.ts          # Test configuration
+│   │
 │   └── utils/                # Utilities
 │       └── cn.ts             # Classname utility
 │
-├── public/                    # Static files
+├── auth.ts                   # NextAuth configuration
+├── middleware.ts             # Route protection
+├── vitest.config.ts          # Test configuration
+├── .env                      # Environment variables (not committed)
+├── .env.example              # Environment template
 ├── MVP_QURIO_FINAL.md        # MVP documentation
+├── QURIO_DEVELOPMENT_ROADMAP.md # Development phases
 └── README.md                 # This file
 ```
 
@@ -129,6 +241,12 @@ qurio-web/
 - **[TypeScript 5](https://www.typescriptlang.org/)** - Type safety
 - **[Tailwind CSS 4](https://tailwindcss.com/)** - Utility-first CSS
 
+### Backend & Database
+- **[Prisma 5](https://www.prisma.io/)** - Next-generation ORM
+- **[Neon PostgreSQL](https://neon.tech/)** - Serverless PostgreSQL (Singapore region)
+- **[NextAuth.js v5](https://next-auth.js.org/)** - Authentication library
+- **OAuth Providers** - Google & GitHub authentication
+
 ### Libraries & Tools
 - **[Framer Motion](https://www.framer.com/motion/)** - Animation library
 - **[Zod](https://zod.dev/)** - Schema validation
@@ -136,7 +254,9 @@ qurio-web/
 - **[canvas-confetti](https://www.npmjs.com/package/canvas-confetti)** - Celebration effects
 - **Web Audio API** - Sound generation
 
-### Development
+### Testing & Quality
+- **[Vitest](https://vitest.dev/)** - Unit testing framework
+- **[@testing-library/react](https://testing-library.com/)** - React testing utilities
 - **ESLint** - Code linting
 - **Prettier** - Code formatting
 - **Git** - Version control
@@ -145,21 +265,35 @@ qurio-web/
 
 ## 📖 How to Play
 
-1. **Pilih Kategori**
-   - Landing page menampilkan 3 kategori: Agama, Sejarah, Pengetahuan Umum
+1. **Login/Register**
+   - Buka aplikasi → Click "Mulai Kuis"
+   - Akan redirect ke halaman login
+   - Pilih "Sign in with Google" atau "Sign in with GitHub"
+   - Authorize aplikasi (sekali saja)
+
+2. **Pilih Kategori**
+   - Setelah login, pilih kategori: Agama, Sejarah, atau Pengetahuan Umum
    - Click kategori untuk memulai quiz
 
-2. **Mainkan Quiz**
+3. **Mainkan Quiz**
    - Jawab 10 pertanyaan pilihan ganda
    - Setiap jawaban benar = 10 poin
    - Feedback langsung setelah submit
    - Score tracking real-time
 
-3. **Lihat Hasil**
+4. **Lihat Hasil**
    - Grade A/B/C berdasarkan performa
    - Statistics breakdown
    - Motivational message
-   - Option untuk main lagi
+   - **NEW:** Score otomatis tersimpan ke database
+
+5. **Dashboard**
+   - Click "Lihat Dashboard" untuk melihat:
+     - Profile information
+     - Total games played
+     - Average score & best score
+     - Quiz history lengkap dengan grades
+   - Track progress dari waktu ke waktu
 
 ---
 
@@ -188,7 +322,7 @@ Sound effects dapat di-toggle on/off dan tidak memerlukan external audio files.
 
 ## 📊 Development Progress
 
-### ✅ Completed (MVP v1.0.0)
+### ✅ Completed (MVP v1.0.0 - December 2025)
 
 #### Phase 1: Foundation (Week 1)
 - [x] Project setup dengan Next.js 16 + TypeScript
@@ -219,30 +353,75 @@ Sound effects dapat di-toggle on/off dan tidak memerlukan external audio files.
 - [x] Documentation
 - [x] Production ready
 
+### ✅ Completed (Phase 0 - Technical Foundation - June 2026)
+- [x] Testing infrastructure (Vitest + React Testing Library)
+- [x] Error Boundary implementation
+- [x] Code quality improvements (extracted AnimatedBackground)
+- [x] Accessibility enhancements (WCAG AA - keyboard nav, ARIA labels)
+- [x] 12 automated tests written and passing
+
+### ✅ Completed (v1.1.0 - Backend & Authentication - June 2026)
+
+#### Week 1: Database & Authentication
+- [x] Prisma ORM setup (8 database models)
+- [x] Neon PostgreSQL integration (Singapore region)
+- [x] NextAuth v5 implementation
+- [x] Google OAuth provider
+- [x] GitHub OAuth provider
+- [x] Protected routes via middleware
+- [x] Session management (JWT strategy)
+
+#### Week 1: User Dashboard
+- [x] User dashboard page (profile, stats, history)
+- [x] Profile section with OAuth profile pictures
+- [x] Statistics tracking (total games, avg score, best score)
+- [x] Quiz history display with grades
+- [x] Score persistence to database
+- [x] API routes (GET/POST /api/scores, GET /api/categories)
+- [x] GameContext integration with database
+- [x] Logout functionality
+
+**Current Status:** v1.1.0 Production Ready ✅
+
 ---
 
 ## 🔜 Future Roadmap
 
-### Version 1.1.0 (Q1 2026)
-- [ ] User authentication (email/social login)
-- [ ] Personal leaderboard
-- [ ] More categories (Sains, Geografi, Olahraga)
-- [ ] Difficulty levels (Easy, Medium, Hard)
-- [ ] Time limit per question
+### Version 1.5.0 - Admin Dashboard (Q3 2026)
+- [ ] Admin authentication & role-based access control
+- [ ] Admin dashboard untuk manage questions
+- [ ] CRUD interface untuk categories
+- [ ] Bulk import questions (CSV/JSON)
+- [ ] Question preview & validation
+- [ ] User management interface
 
-### Version 1.2.0 (Q2 2026)
-- [ ] Multiplayer mode
-- [ ] Real-time challenges
-- [ ] Achievement system
-- [ ] Profile customization
+### Version 1.6.0 - Enhanced Gameplay (Q3 2026)
+- [ ] Timer per question (configurable)
+- [ ] Difficulty levels (Easy, Medium, Hard)
+- [ ] More question categories (expand beyond 3)
+- [ ] Question shuffle modes
+- [ ] Hints system (50:50, skip question)
+- [ ] Power-ups & boosters
+
+### Version 1.7.0 - Leaderboard & Social (Q4 2026)
+- [ ] Global leaderboard (per category & all-time)
+- [ ] Friend system (add/remove friends)
+- [ ] Compare scores with friends
+- [ ] Social sharing (share results to social media)
+- [ ] Achievement system & badges
 - [ ] Daily challenges
 
-### Version 2.0.0 (Q3 2026)
+### Version 2.0.0 - Multiplayer (Q1 2027)
+- [ ] Real-time multiplayer quiz rooms
+- [ ] Socket.io integration
+- [ ] Matchmaking system
+- [ ] Ranked matches with ELO rating
+- [ ] Live leaderboard during game
+- [ ] Chat & reactions
 - [ ] Mobile app (React Native)
 - [ ] Offline mode (PWA)
-- [ ] Community features
-- [ ] Question submission by users
-- [ ] Admin dashboard
+
+**Note:** Roadmap subject to change based on user feedback and priorities.
 
 ---
 
@@ -278,28 +457,24 @@ Jika menemukan bug, silakan buat issue dengan detail:
 
 ## 📝 Changelog
 
-### [1.0.0] - 2025-12-17
-#### Added
-- ✨ Initial release dengan MVP complete
-- 🎯 60 soal di 3 kategori
-- 🎨 Modern UI dengan Tailwind CSS 4
-- 🎵 Sound effects dengan Web Audio API
-- 🏆 Sistem grading A/B/C
-- 🎉 Confetti celebration untuk high scores
+For detailed changelog, see [CHANGELOG.md](CHANGELOG.md)
+
+### Recent Updates
+
+**v1.1.0 (June 2026) - Backend & Authentication**
+- ✨ User authentication with Google & GitHub OAuth
+- 💾 Database integration with Neon PostgreSQL + Prisma
+- 📊 User dashboard with profile, statistics, and quiz history
+- 🔒 Protected routes with middleware
+- ✅ Testing infrastructure with 12 automated tests
+- ♿ Accessibility improvements (WCAG AA)
+- 🐛 Error Boundary for graceful error handling
+
+**v1.0.0 (December 2025) - MVP Launch**
+- 🎯 60 questions across 3 categories
+- 🏆 Grading system (A/B/C)
+- 🎵 Sound effects & confetti
 - 📱 Fully responsive design
-- ⚡ Performance optimization dengan Next.js 16
-
-#### Fixed
-- 🐛 Score counter animation (removed shake)
-- 🐛 TypeScript warnings di useSoundEffects
-- 🐛 Category card alignment issue
-- 🐛 Result page layout optimization
-
-#### Changed
-- 🔄 Result page dengan compact layout
-- 🔄 Enhanced motivational card design
-- 🔄 Better spacing antar components
-- 🔄 Improved .gitignore configuration
 
 ---
 
@@ -336,4 +511,4 @@ Jika project ini membantu kamu, berikan ⭐ di GitHub!
 
 **Built with ❤️ and ☕ - Making Learning Fun Again!**
 
-*Last Updated: December 17, 2025*
+*Last Updated: June 23, 2026*
