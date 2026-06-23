@@ -50,14 +50,33 @@ export function QuestionCard({
     const feedback = getAnswerFeedback(index);
     
     if (feedback === "correct") {
-      return <CheckCircle2 className="w-6 h-6 text-[#4CAF50]" />;
+      return (
+        <div className="flex items-center gap-1.5">
+          <CheckCircle2 className="w-6 h-6 text-[#4CAF50]" />
+          <span className="text-sm font-bold text-[#4CAF50]">Benar</span>
+        </div>
+      );
     }
     
     if (feedback === "wrong") {
-      return <XCircle className="w-6 h-6 text-[#EF5350]" />;
+      return (
+        <div className="flex items-center gap-1.5">
+          <XCircle className="w-6 h-6 text-[#EF5350]" />
+          <span className="text-sm font-bold text-[#EF5350]">Salah</span>
+        </div>
+      );
     }
     
     return null;
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (isAnswerSubmitted) return;
+    
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onSelectAnswer?.(index);
+    }
   };
 
   return (
@@ -75,12 +94,19 @@ export function QuestionCard({
             <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center shadow-md">
               <Sparkles className="w-5 h-5 text-white" fill="white" />
             </div>
-            <span className="text-base font-semibold text-gray-800">
+            <span 
+              className="text-base font-semibold text-gray-800"
+              aria-live="polite"
+              aria-atomic="true"
+            >
               Pertanyaan {currentQuestion} dari {totalQuestions}
             </span>
           </div>
           <div className="px-3 py-1.5 rounded-lg bg-blue-100 border border-blue-300">
-            <span className="text-base font-bold text-blue-800">
+            <span 
+              className="text-base font-bold text-blue-800"
+              aria-label={`Progress ${Math.round((currentQuestion / totalQuestions) * 100)} persen`}
+            >
               {Math.round((currentQuestion / totalQuestions) * 100)}%
             </span>
           </div>
@@ -98,24 +124,38 @@ export function QuestionCard({
 
         {/* Question Text */}
         <div className="mb-8 p-5 rounded-xl bg-gray-50 border border-gray-200">
-          <h2 className="text-xl lg:text-2xl font-semibold text-gray-900 leading-relaxed">
+          <h2 
+            className="text-xl lg:text-2xl font-semibold text-gray-900 leading-relaxed"
+            id={`question-${currentQuestion}`}
+            tabIndex={0}
+          >
             {question}
           </h2>
         </div>
 
         {/* Answer Options Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div 
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+          role="radiogroup"
+          aria-label="Pilihan jawaban"
+        >
           {options.map((option, index) => (
             <motion.button
               key={index}
               onClick={() => onSelectAnswer?.(index)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
               disabled={isAnswerSubmitted}
+              tabIndex={isAnswerSubmitted ? -1 : 0}
+              aria-label={`Opsi ${String.fromCharCode(65 + index)}: ${option}`}
+              aria-pressed={selectedAnswer === index}
+              aria-disabled={isAnswerSubmitted}
               whileHover={{ scale: isAnswerSubmitted ? 1 : 1.02 }}
               whileTap={{ scale: isAnswerSubmitted ? 1 : 0.98 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
               className={cn(
                 "group relative p-5 rounded-xl border-2 text-left transition-all duration-200",
                 "bg-white hover:bg-blue-50 hover:border-primary-blue hover:shadow-md",
+                "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-400 focus-visible:ring-offset-2",
                 "disabled:cursor-not-allowed disabled:opacity-70",
                 "font-medium text-base text-gray-800",
                 selectedAnswer === index && !isAnswerSubmitted && "border-primary-blue bg-blue-50 shadow-md",

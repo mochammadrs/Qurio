@@ -73,6 +73,9 @@ export function ScoreBoard({ score, totalQuestions }: ScoreBoardProps) {
               </div>
               <p 
                 className="text-4xl font-heading font-black tracking-tight"
+                aria-live="polite"
+                aria-atomic="true"
+                aria-label={`Skor saat ini: ${Math.round(displayScore)} dari ${maxScore} poin`}
               >
                 {Math.round(displayScore)}
               </p>
@@ -86,10 +89,22 @@ export function ScoreBoard({ score, totalQuestions }: ScoreBoardProps) {
               <span className="text-xs font-semibold opacity-90">Progress</span>
               <div className="flex items-center gap-1">
                 <TrendingUp className="w-3 h-3" />
-                <span className="text-xs font-bold">{Math.round(percentage)}%</span>
+                <span 
+                  className="text-xs font-bold"
+                  aria-label={`Progress ${Math.round(percentage)} persen`}
+                >
+                  {Math.round(percentage)}%
+                </span>
               </div>
             </div>
-            <div className="relative bg-white/20 backdrop-blur-sm rounded-full h-2.5 overflow-hidden shadow-inner">
+            <div 
+              className="relative bg-white/20 backdrop-blur-sm rounded-full h-2.5 overflow-hidden shadow-inner"
+              role="progressbar"
+              aria-valuenow={percentage}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Progress kuis"
+            >
               <motion.div
                 className="absolute inset-0 bg-yellow-300 h-full rounded-full shadow-md"
                 initial={{ width: 0 }}
