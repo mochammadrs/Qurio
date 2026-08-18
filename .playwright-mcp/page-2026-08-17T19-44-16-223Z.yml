@@ -1,4 +1,0 @@
-- generic [active] [ref=f3e1]:
-  - paragraph [ref=f3e5]: Memuat pertanyaan...
-  - button "Open Next.js Dev Tools" [ref=f3e11] [cursor=pointer]
-  - alert [ref=f3e15]
