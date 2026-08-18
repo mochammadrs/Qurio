@@ -1,74 +1,115 @@
-import { describe, it, expect } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { GameProvider, useGame } from '../GameContext';
-import { Category } from '../types';
+import { Category, Question } from '../types';
 
 // Wrapper untuk testing hooks
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <GameProvider>{children}</GameProvider>
 );
 
+function createMockQuestions(category: Category): Question[] {
+  return Array.from({ length: 10 }, (_, i) => ({
+    id: `${category}-${i + 1}`,
+    category,
+    question: `Soal ${category} ke-${i + 1}`,
+    options: ['Opsi A', 'Opsi B', 'Opsi C', 'Opsi D'],
+    correctAnswer: 0,
+  }));
+}
+
+function mockFetchWith(questions: Question[]) {
+  return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+
+    if (url.includes('/api/questions')) {
+      return new Response(JSON.stringify({ questions }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (url.includes('/api/categories')) {
+      return new Response(
+        JSON.stringify({
+          categories: [
+            { id: 'cat-agama', slug: 'agama', name: 'Agama' },
+            { id: 'cat-sejarah', slug: 'sejarah', name: 'Sejarah' },
+            { id: 'cat-umum', slug: 'umum', name: 'Pengetahuan Umum' },
+          ],
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
+
+    if (url.includes('/api/scores')) {
+      return new Response(JSON.stringify({ success: true }), {
+        status: 201,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    return new Response(JSON.stringify({}), { status: 404 });
+  });
+}
+
 describe('GameContext', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', mockFetchWith(createMockQuestions('agama')));
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   describe('startGame', () => {
-    it('should start game dengan kategori yang dipilih', () => {
+    it('should start game dengan kategori yang dipilih', async () => {
       const { result } = renderHook(() => useGame(), { wrapper });
 
       act(() => {
         result.current.startGame('agama');
       });
 
+      await waitFor(() => expect(result.current.questions).toHaveLength(10));
+
       expect(result.current.category).toBe('agama');
-      expect(result.current.questions).toHaveLength(10);
       expect(result.current.isGameActive).toBe(true);
       expect(result.current.isGameFinished).toBe(false);
       expect(result.current.score).toBe(0);
     });
 
-    it('should shuffle questions setiap game baru', () => {
-      const { result } = renderHook(() => useGame(), { wrapper });
-
-      // Start game pertama
-      act(() => {
-        result.current.startGame('agama');
-      });
-      const firstGameQuestions = result.current.questions.map(q => q.id);
-
-      // Reset dan start game kedua
-      act(() => {
-        result.current.resetGame();
-        result.current.startGame('agama');
-      });
-      const secondGameQuestions = result.current.questions.map(q => q.id);
-
-      // Questions harus di-shuffle (kemungkinan besar berbeda)
-      // Note: Ada small chance sama, tapi sangat rendah
-      expect(firstGameQuestions).toHaveLength(10);
-      expect(secondGameQuestions).toHaveLength(10);
-    });
-
-    it('should load 10 questions untuk setiap kategori', () => {
+    it('should memuat 10 soal untuk setiap kategori', async () => {
       const categories: Category[] = ['agama', 'sejarah', 'umum'];
       const { result } = renderHook(() => useGame(), { wrapper });
 
-      categories.forEach((category) => {
+      for (const category of categories) {
+        vi.stubGlobal('fetch', mockFetchWith(createMockQuestions(category)));
+
         act(() => {
           result.current.resetGame();
           result.current.startGame(category);
         });
 
+        await waitFor(() => expect(result.current.questions).toHaveLength(10));
+
         expect(result.current.questions).toHaveLength(10);
         expect(result.current.category).toBe(category);
-      });
+        expect(
+          result.current.questions.every((q) => q.category === category),
+        ).toBe(true);
+      }
     });
   });
 
   describe('submitAnswer', () => {
-    it('should update score ketika jawaban benar', () => {
+    it('should update score ketika jawaban benar', async () => {
       const { result } = renderHook(() => useGame(), { wrapper });
 
       act(() => {
         result.current.startGame('agama');
       });
+
+      await waitFor(() => expect(result.current.questions).toHaveLength(10));
 
       const currentQuestion = result.current.questions[0];
       const correctAnswerIndex = currentQuestion.correctAnswer;
@@ -82,12 +123,14 @@ describe('GameContext', () => {
       expect(result.current.answers[0].isCorrect).toBe(true);
     });
 
-    it('should tidak update score ketika jawaban salah', () => {
+    it('should tidak update score ketika jawaban salah', async () => {
       const { result } = renderHook(() => useGame(), { wrapper });
 
       act(() => {
         result.current.startGame('agama');
       });
+
+      await waitFor(() => expect(result.current.questions).toHaveLength(10));
 
       const currentQuestion = result.current.questions[0];
       const wrongAnswerIndex = (currentQuestion.correctAnswer + 1) % 4;
@@ -104,7 +147,6 @@ describe('GameContext', () => {
     it('should tidak accept answer jika game tidak aktif', () => {
       const { result } = renderHook(() => useGame(), { wrapper });
 
-      // Game belum dimulai
       act(() => {
         result.current.submitAnswer(0);
       });
@@ -115,12 +157,14 @@ describe('GameContext', () => {
   });
 
   describe('nextQuestion', () => {
-    it('should move ke question berikutnya', () => {
+    it('should move ke question berikutnya', async () => {
       const { result } = renderHook(() => useGame(), { wrapper });
 
       act(() => {
         result.current.startGame('agama');
       });
+
+      await waitFor(() => expect(result.current.questions).toHaveLength(10));
 
       const initialIndex = result.current.currentQuestionIndex;
 
@@ -134,12 +178,14 @@ describe('GameContext', () => {
       expect(result.current.isGameFinished).toBe(false);
     });
 
-    it('should finish game setelah soal terakhir', () => {
+    it('should finish game setelah soal terakhir', async () => {
       const { result } = renderHook(() => useGame(), { wrapper });
 
       act(() => {
         result.current.startGame('agama');
       });
+
+      await waitFor(() => expect(result.current.questions).toHaveLength(10));
 
       // Answer semua 10 questions
       act(() => {
@@ -164,12 +210,14 @@ describe('GameContext', () => {
   });
 
   describe('getResult', () => {
-    it('should calculate grade A untuk score ≥80%', () => {
+    it('should calculate grade A untuk score ≥80%', async () => {
       const { result } = renderHook(() => useGame(), { wrapper });
 
       act(() => {
         result.current.startGame('agama');
       });
+
+      await waitFor(() => expect(result.current.questions).toHaveLength(10));
 
       // Answer 8 benar, 2 salah = 80%
       act(() => {
@@ -196,12 +244,14 @@ describe('GameContext', () => {
       expect(gameResult.wrongAnswers).toBe(2);
     });
 
-    it('should calculate grade B untuk score 60-79%', () => {
+    it('should calculate grade B untuk score 60-79%', async () => {
       const { result } = renderHook(() => useGame(), { wrapper });
 
       act(() => {
         result.current.startGame('sejarah');
       });
+
+      await waitFor(() => expect(result.current.questions).toHaveLength(10));
 
       // Answer 7 benar, 3 salah = 70%
       act(() => {
@@ -225,12 +275,14 @@ describe('GameContext', () => {
       expect(gameResult.correctAnswers).toBe(7);
     });
 
-    it('should calculate grade C untuk score <60%', () => {
+    it('should calculate grade C untuk score <60%', async () => {
       const { result } = renderHook(() => useGame(), { wrapper });
 
       act(() => {
         result.current.startGame('umum');
       });
+
+      await waitFor(() => expect(result.current.questions).toHaveLength(10));
 
       // Answer 5 benar, 5 salah = 50%
       act(() => {
@@ -257,7 +309,7 @@ describe('GameContext', () => {
   });
 
   describe('resetGame', () => {
-    it('should reset game ke initial state', () => {
+    it('should reset game ke initial state', async () => {
       const { result } = renderHook(() => useGame(), { wrapper });
 
       // Start dan play game

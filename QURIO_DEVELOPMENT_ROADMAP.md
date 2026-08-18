@@ -34,7 +34,7 @@ For detailed changelog, see [CHANGELOG.md](CHANGELOG.md)
 
 | Fitur | Status |
 |---|---|
-| 60 soal di 3 kategori | ✅ Done |
+| 120 soal di 3 kategori | ✅ Done |
 | Quiz engine + randomization | ✅ Done |
 | Grading system A/B/C | ✅ Done |
 | Sound effects (Web Audio API) | ✅ Done |
@@ -1090,12 +1090,12 @@ railway up
 - [x] Test login + simpan skor end-to-end
 
 ### Phase 2 — Fitur Gameplay
-- [ ] Tambah field `difficulty` di semua 60 soal
+- [ ] Tambah field `difficulty` di semua 120 soal
 - [ ] Tambah field `explanation` di soal (minimal 20 soal)
 - [ ] Buat komponen `Timer.tsx`
 - [ ] Integrasi timer ke `useQuizEngine.ts`
 - [ ] Buat komponen `DifficultySelector.tsx`
-- [ ] Tambah minimal 1 kategori baru (+ 20 soal)
+- [ ] Tambah minimal 1 kategori baru (+ 40 soal)
 - [ ] Buat section review jawaban di halaman result
 
 ### Phase 3 — Leaderboard & Profil

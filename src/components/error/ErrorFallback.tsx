@@ -26,46 +26,46 @@ export function ErrorFallback({ error, errorInfo, onReset }: ErrorFallbackProps)
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-surface flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
         <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center">
-            <AlertTriangle className="w-10 h-10 text-red-600" />
+          <div className="w-16 h-16 bg-surface-container rounded-lg flex items-center justify-center">
+            <AlertTriangle className="w-8 h-8 text-error" />
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-8 border-2 border-red-100">
-          <h1 className="text-3xl font-bold text-gray-900 mb-3 text-center">
-            Oops! Terjadi Kesalahan
+        <div className="bg-surface-card border border-border rounded-lg p-8">
+          <h1 className="text-headline-lg text-text-primary mb-3 text-center">
+            Terjadi Kesalahan
           </h1>
-          <p className="text-gray-600 text-center mb-6">
+          <p className="text-text-muted text-center mb-6">
             Maaf, terjadi kesalahan yang tidak terduga. Tim kami telah diberitahu dan akan segera memperbaikinya.
           </p>
 
           {isDevelopment && error && (
-            <details className="mb-6 bg-red-50 rounded-lg p-4 border border-red-200">
-              <summary className="cursor-pointer font-semibold text-red-800 mb-2">
+            <details className="mb-6 bg-surface-low rounded-md p-4 border border-border">
+              <summary className="cursor-pointer font-semibold text-text-secondary mb-2">
                 Detail Error (Development Mode)
               </summary>
               <div className="mt-3 space-y-2">
                 <div>
-                  <p className="text-sm font-semibold text-red-900">Error Message:</p>
-                  <pre className="text-xs text-red-700 bg-red-100 p-2 rounded mt-1 overflow-x-auto">
+                  <p className="text-sm font-semibold text-text-primary">Error Message:</p>
+                  <pre className="text-xs text-error bg-surface-container p-2 rounded mt-1 overflow-x-auto">
                     {error.message}
                   </pre>
                 </div>
                 {error.stack && (
                   <div>
-                    <p className="text-sm font-semibold text-red-900">Stack Trace:</p>
-                    <pre className="text-xs text-red-700 bg-red-100 p-2 rounded mt-1 overflow-x-auto max-h-40 overflow-y-auto">
+                    <p className="text-sm font-semibold text-text-primary">Stack Trace:</p>
+                    <pre className="text-xs text-error bg-surface-container p-2 rounded mt-1 overflow-x-auto max-h-40 overflow-y-auto">
                       {error.stack}
                     </pre>
                   </div>
                 )}
                 {errorInfo?.componentStack && (
                   <div>
-                    <p className="text-sm font-semibold text-red-900">Component Stack:</p>
-                    <pre className="text-xs text-red-700 bg-red-100 p-2 rounded mt-1 overflow-x-auto max-h-40 overflow-y-auto">
+                    <p className="text-sm font-semibold text-text-primary">Component Stack:</p>
+                    <pre className="text-xs text-error bg-surface-container p-2 rounded mt-1 overflow-x-auto max-h-40 overflow-y-auto">
                       {errorInfo.componentStack}
                     </pre>
                   </div>
@@ -94,7 +94,7 @@ export function ErrorFallback({ error, errorInfo, onReset }: ErrorFallbackProps)
           </div>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="text-center text-sm text-text-subtle mt-6">
           Jika masalah ini terus berlanjut, silakan hubungi support kami.
         </p>
       </div>

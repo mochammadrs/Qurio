@@ -1,7 +1,5 @@
-import { Card } from "@/components/ui/Card";
 import { cn } from "@/utils/cn";
-import { motion } from "framer-motion";
-import { Sparkles, CheckCircle2, XCircle } from "lucide-react";
+import { Check } from "lucide-react";
 
 interface QuestionCardProps {
   question: string;
@@ -14,181 +12,101 @@ interface QuestionCardProps {
   isAnswerSubmitted?: boolean;
 }
 
-/**
- * QuestionCard Component
- * Menampilkan soal dan 4 opsi jawaban dalam grid 2x2 dengan Bento style
- */
 export function QuestionCard({
   question,
   options,
-  currentQuestion,
-  totalQuestions,
   onSelectAnswer,
   selectedAnswer,
   getAnswerFeedback,
   isAnswerSubmitted = false,
 }: QuestionCardProps) {
-  const getFeedbackStyles = (index: number) => {
-    if (!getAnswerFeedback) return "";
-    
-    const feedback = getAnswerFeedback(index);
-    
-    if (feedback === "correct") {
-      return "border-success-leaf bg-green-50 ring-4 ring-success-leaf/30 shadow-lg shadow-green-200";
+  const getOptionStyles = (index: number) => {
+    if (isAnswerSubmitted && getAnswerFeedback) {
+      const feedback = getAnswerFeedback(index);
+      if (feedback === "correct")
+        return "border-2 border-success-leaf bg-success-leaf/5";
+      if (feedback === "wrong")
+        return "border-2 border-error bg-error/5";
     }
-    
-    if (feedback === "wrong") {
-      return "border-[#EF5350] bg-red-50 ring-4 ring-red-300 shadow-lg shadow-red-200 animate-shake";
+    if (selectedAnswer === index) {
+      return "border-2 border-primary bg-primary/5";
     }
-    
-    return "";
+    return "border border-border bg-surface-card hover:bg-surface-low hover:border-text-subtle";
   };
 
-  const getFeedbackIcon = (index: number) => {
-    if (!getAnswerFeedback) return null;
-    
-    const feedback = getAnswerFeedback(index);
-    
-    if (feedback === "correct") {
-      return (
-        <div className="flex items-center gap-1.5">
-          <CheckCircle2 className="w-6 h-6 text-[#4CAF50]" />
-          <span className="text-sm font-bold text-[#4CAF50]">Benar</span>
-        </div>
-      );
+  const getBadgeStyles = (index: number) => {
+    if (isAnswerSubmitted && getAnswerFeedback) {
+      const feedback = getAnswerFeedback(index);
+      if (feedback === "correct")
+        return "bg-success-leaf text-white border-success-leaf";
+      if (feedback === "wrong")
+        return "bg-error text-white border-error";
     }
-    
-    if (feedback === "wrong") {
-      return (
-        <div className="flex items-center gap-1.5">
-          <XCircle className="w-6 h-6 text-[#EF5350]" />
-          <span className="text-sm font-bold text-[#EF5350]">Salah</span>
-        </div>
-      );
+    if (selectedAnswer === index) {
+      return "bg-primary text-on-primary border-primary";
     }
-    
-    return null;
+    return "border border-border text-text-secondary group-hover:border-primary group-hover:text-primary";
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (isAnswerSubmitted) return;
-    
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       onSelectAnswer?.(index);
     }
   };
 
   return (
-    <motion.div
-      key={currentQuestion}
-      initial={{ opacity: 0, scale: 0.95, y: 20 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95, y: -20 }}
-      transition={{ duration: 0.4, type: "spring", bounce: 0.3 }}
-    >
-      <Card className="max-w-4xl mx-auto p-6 lg:p-8 bg-white shadow-lg border border-gray-200">
-        {/* Question Counter */}
-        <div className="mb-5 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-500 flex items-center justify-center shadow-md">
-              <Sparkles className="w-5 h-5 text-white" fill="white" />
-            </div>
-            <span 
-              className="text-base font-semibold text-gray-800"
-              aria-live="polite"
-              aria-atomic="true"
-            >
-              Pertanyaan {currentQuestion} dari {totalQuestions}
-            </span>
-          </div>
-          <div className="px-3 py-1.5 rounded-lg bg-blue-100 border border-blue-300">
-            <span 
-              className="text-base font-bold text-blue-800"
-              aria-label={`Progress ${Math.round((currentQuestion / totalQuestions) * 100)} persen`}
-            >
-              {Math.round((currentQuestion / totalQuestions) * 100)}%
-            </span>
-          </div>
-        </div>
+    <div className="w-full animate-fade-in">
+      <div className="w-full bg-surface-card border border-border rounded-xl p-6 md:p-8 mb-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full" />
+        <h2 className="headline-lg text-text-primary mb-3 relative z-10">
+          {question}
+        </h2>
+        <p className="text-body-md text-text-secondary relative z-10">
+          Pilih satu jawaban yang paling tepat dari pilihan di bawah ini.
+        </p>
+      </div>
 
-        {/* Progress Bar */}
-        <div className="w-full bg-gray-200 rounded-full h-2.5 mb-8 overflow-hidden">
-          <motion.div
-            className="bg-blue-500 h-full rounded-full shadow-md"
-            initial={{ width: 0 }}
-            animate={{ width: `${(currentQuestion / totalQuestions) * 100}%` }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          />
-        </div>
-
-        {/* Question Text */}
-        <div className="mb-8 p-5 rounded-xl bg-gray-50 border border-gray-200">
-          <h2 
-            className="text-xl lg:text-2xl font-semibold text-gray-900 leading-relaxed"
-            id={`question-${currentQuestion}`}
-            tabIndex={0}
+      <div className="flex flex-col gap-4 mb-8" role="radiogroup" aria-label="Pilihan jawaban">
+        {options.map((option, index) => (
+          <button
+            key={index}
+            onClick={() => onSelectAnswer?.(index)}
+            onKeyDown={(e) => handleKeyDown(e, index)}
+            disabled={isAnswerSubmitted}
+            tabIndex={isAnswerSubmitted ? -1 : 0}
+            aria-label={`Opsi ${String.fromCharCode(65 + index)}: ${option}`}
+            aria-pressed={selectedAnswer === index}
+            className={cn(
+              "group flex items-center justify-between w-full p-4 rounded-lg text-left transition-all duration-150",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+              "disabled:cursor-not-allowed",
+              getOptionStyles(index)
+            )}
           >
-            {question}
-          </h2>
-        </div>
-
-        {/* Answer Options Grid */}
-        <div 
-          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
-          role="radiogroup"
-          aria-label="Pilihan jawaban"
-        >
-          {options.map((option, index) => (
-            <motion.button
-              key={index}
-              onClick={() => onSelectAnswer?.(index)}
-              onKeyDown={(e) => handleKeyDown(e, index)}
-              disabled={isAnswerSubmitted}
-              tabIndex={isAnswerSubmitted ? -1 : 0}
-              aria-label={`Opsi ${String.fromCharCode(65 + index)}: ${option}`}
-              aria-pressed={selectedAnswer === index}
-              aria-disabled={isAnswerSubmitted}
-              whileHover={{ scale: isAnswerSubmitted ? 1 : 1.02 }}
-              whileTap={{ scale: isAnswerSubmitted ? 1 : 0.98 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className={cn(
-                "group relative p-5 rounded-xl border-2 text-left transition-all duration-200",
-                "bg-white hover:bg-blue-50 hover:border-primary-blue hover:shadow-md",
-                "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-400 focus-visible:ring-offset-2",
-                "disabled:cursor-not-allowed disabled:opacity-70",
-                "font-medium text-base text-gray-800",
-                selectedAnswer === index && !isAnswerSubmitted && "border-primary-blue bg-blue-50 shadow-md",
-                !isAnswerSubmitted && "border-gray-300",
-                getFeedbackStyles(index)
-              )}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3 flex-1">
-                  <span className={cn(
-                    "shrink-0 w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm transition-all",
-                    selectedAnswer === index && !isAnswerSubmitted 
-                      ? "bg-blue-500 text-white shadow-md" 
-                      : "bg-gray-100 text-gray-700 group-hover:bg-blue-100 group-hover:text-blue-700"
-                  )}>
-                    {String.fromCharCode(65 + index)}
-                  </span>
-                  <span className="flex-1 leading-relaxed text-gray-900">{option}</span>
-                </div>
-                {getFeedbackIcon(index) && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                  >
-                    {getFeedbackIcon(index)}
-                  </motion.div>
+            <div className="flex items-center gap-4">
+              <span
+                className={cn(
+                  "flex items-center justify-center w-8 h-8 rounded-full label-sm transition-colors",
+                  getBadgeStyles(index)
                 )}
-              </div>
-            </motion.button>
-          ))}
-        </div>
-      </Card>
-    </motion.div>
+              >
+                {isAnswerSubmitted && getAnswerFeedback?.(index) === "correct" ? (
+                  <Check className="w-4 h-4" />
+                ) : isAnswerSubmitted && getAnswerFeedback?.(index) === "wrong" ? (
+                  <span className="text-sm font-bold">×</span>
+                ) : (
+                  String.fromCharCode(65 + index)
+                )}
+              </span>
+              <span className="text-body-lg text-text-primary font-medium">
+                {option}
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

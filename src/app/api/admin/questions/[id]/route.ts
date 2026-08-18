@@ -52,6 +52,19 @@ function validateQuestionBody(body: Record<string, unknown>, partial = false) {
     errors.push("difficulty must be one of: easy, medium, hard");
   }
 
+  if (
+    body.explanation !== undefined &&
+    body.explanation !== null &&
+    typeof body.explanation !== "string"
+  ) {
+    errors.push("explanation must be a string");
+  } else if (
+    typeof body.explanation === "string" &&
+    body.explanation.length > 2000
+  ) {
+    errors.push("explanation must be at most 2000 characters");
+  }
+
   if (!partial && errors.length === 0) {
     if (!body.categoryId) errors.push("categoryId is required");
     if (!body.question) errors.push("question is required");
@@ -139,6 +152,7 @@ export async function PUT(
     if (body.options !== undefined) data.options = body.options;
     if (body.correctAnswer !== undefined) data.correctAnswer = body.correctAnswer;
     if (body.difficulty !== undefined) data.difficulty = body.difficulty;
+    if (body.explanation !== undefined) data.explanation = body.explanation;
 
     const question = await prisma.question.update({
       where: { id },
@@ -148,6 +162,7 @@ export async function PUT(
         options?: string[];
         correctAnswer?: number;
         difficulty?: string;
+        explanation?: string;
       },
       include: { category: true },
     });

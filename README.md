@@ -8,15 +8,15 @@
 ![Tailwind](https://img.shields.io/badge/Tailwind-4.0-38bdf8)
 ![Status](https://img.shields.io/badge/status-Production_Ready-success)
 
-**Qurio** adalah aplikasi web quiz modern dengan sistem autentikasi dan persistensi data yang lengkap. Dengan 60 soal berkualitas di 3 kategori berbeda, sistem grading yang fair, user dashboard untuk tracking progres, dan OAuth authentication, Qurio memberikan pengalaman kuis yang complete dan scalable.
+**Qurio** adalah aplikasi web quiz modern dengan sistem autentikasi dan persistensi data yang lengkap. Dengan 120 soal berkualitas di 3 kategori berbeda, sistem grading yang fair, user dashboard untuk tracking progres, dan OAuth authentication, Qurio memberikan pengalaman kuis yang complete dan scalable.
 
 ---
 
 ## ✨ Features
 
 ### Core Features
-- 🎯 **Interactive Quiz System:** 10 pertanyaan per sesi dari pool 60 soal berkualitas
-- 📚 **3 Kategori Utama:** Agama, Sejarah, Pengetahuan Umum (masing-masing 20 soal)
+- 🎯 **Interactive Quiz System:** 10 pertanyaan per sesi dari pool 120 soal berkualitas
+- 📚 **3 Kategori Utama:** Agama, Sejarah, Pengetahuan Umum (masing-masing 40 soal)
 - 🔐 **User Authentication:** OAuth login dengan Google dan GitHub
 - 👤 **User Dashboard:** Profile, statistics, dan quiz history tracking
 - 💾 **Data Persistence:** Scores tersimpan di database (Neon PostgreSQL)
@@ -109,7 +109,7 @@ Copy output ke `.env` sebagai `NEXTAUTH_SECRET`
 # Push Prisma schema to database
 npx prisma db push
 
-# Seed database dengan 60 questions
+# Seed database dengan 120 questions
 npx prisma db seed
 
 # (Optional) Open Prisma Studio untuk view data
@@ -206,7 +206,7 @@ qurio-web/
 │   │   └── types.ts          # Context types
 │   │
 │   ├── data/
-│   │   └── questions.ts      # Question database (60 soal)
+│   │   └── questions.ts      # Question database (120 soal)
 │   │
 │   ├── hooks/                # Custom hooks
 │   │   ├── useQuizEngine.ts  # Quiz logic
@@ -328,7 +328,7 @@ Sound effects dapat di-toggle on/off dan tidak memerlukan external audio files.
 - [x] Project setup dengan Next.js 16 + TypeScript
 - [x] Tailwind CSS 4 configuration
 - [x] Folder structure & architecture
-- [x] Question database (60 soal)
+- [x] Question database (120 soal)
 - [x] Data validation dengan Zod
 
 #### Phase 2: Core Features (Week 2)
@@ -471,7 +471,7 @@ For detailed changelog, see [CHANGELOG.md](CHANGELOG.md)
 - 🐛 Error Boundary for graceful error handling
 
 **v1.0.0 (December 2025) - MVP Launch**
-- 🎯 60 questions across 3 categories
+- 🎯 120 questions across 3 categories
 - 🏆 Grading system (A/B/C)
 - 🎵 Sound effects & confetti
 - 📱 Fully responsive design

@@ -14,7 +14,6 @@ interface CategoryFormProps {
     slug: string;
     name: string;
     description: string | null;
-    emoji: string | null;
   };
   onSuccess: () => void;
   onCancel: () => void;
@@ -26,7 +25,6 @@ export function CategoryForm({ mode, initialData, onSuccess, onCancel }: Categor
   const [slug, setSlug] = useState(initialData?.slug ?? "");
   const [name, setName] = useState(initialData?.name ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
-  const [emoji, setEmoji] = useState(initialData?.emoji ?? "");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [slugError, setSlugError] = useState<string | null>(null);
@@ -73,7 +71,6 @@ export function CategoryForm({ mode, initialData, onSuccess, onCancel }: Categor
         slug: slug.trim(),
         name: name.trim(),
         description: description.trim(),
-        emoji: emoji.trim(),
       };
 
       const url =
@@ -111,43 +108,42 @@ export function CategoryForm({ mode, initialData, onSuccess, onCancel }: Categor
       setSlug(initialData.slug);
       setName(initialData.name);
       setDescription(initialData.description ?? "");
-      setEmoji(initialData.emoji ?? "");
     }
   }, [initialData]);
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20"
       role="dialog"
       aria-modal="true"
       aria-label={mode === "create" ? "Tambah kategori" : "Edit kategori"}
     >
-      <Card className="w-full max-w-lg p-0">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900">
+      <Card className="w-full max-w-lg p-0 border-border">
+        <div className="flex items-center justify-between p-6 border-b border-border">
+          <h2 className="text-title-md text-text-primary">
             {mode === "create" ? "Tambah Kategori" : "Edit Kategori"}
           </h2>
           <button
             type="button"
             onClick={onCancel}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+            className="p-1 hover:bg-surface-container transition-colors rounded-sm"
             aria-label="Tutup form"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-text-muted" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-red-50 border border-red-200">
-              <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
-              <p className="text-sm text-red-700">{error}</p>
+            <div className="flex items-center gap-3 p-4 rounded border border-error/20 bg-error/5">
+              <AlertCircle className="w-5 h-5 text-error shrink-0" />
+              <p className="text-sm text-error font-medium">{error}</p>
             </div>
           )}
 
           <div>
-            <label htmlFor="slug" className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Slug <span className="text-red-500">*</span>
+            <label htmlFor="slug" className="block label-sm text-text-subtle mb-2">
+              Slug
             </label>
             <input
               id="slug"
@@ -157,15 +153,15 @@ export function CategoryForm({ mode, initialData, onSuccess, onCancel }: Categor
               placeholder="contoh-kategori"
               maxLength={50}
               disabled={submitting || mode === "edit"}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full px-4 py-2.5 rounded border border-border bg-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all disabled:opacity-50"
             />
-            {slugError && <p className="text-xs text-red-500 mt-1">{slugError}</p>}
-            {!slugError && <p className="text-xs text-gray-400 mt-1">Huruf kecil, angka, dan tanda hubung</p>}
+            {slugError && <p className="text-xs text-error mt-1">{slugError}</p>}
+            {!slugError && <p className="text-xs text-text-subtle mt-1">Huruf kecil, angka, dan tanda hubung</p>}
           </div>
 
           <div>
-            <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Nama <span className="text-red-500">*</span>
+            <label htmlFor="name" className="block label-sm text-text-subtle mb-2">
+              Nama
             </label>
             <input
               id="name"
@@ -175,13 +171,13 @@ export function CategoryForm({ mode, initialData, onSuccess, onCancel }: Categor
               placeholder="Nama Kategori"
               maxLength={100}
               disabled={submitting}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 transition-all"
+              className="w-full px-4 py-2.5 rounded border border-border bg-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all disabled:opacity-50"
             />
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Deskripsi <span className="text-gray-400 font-normal">(opsional)</span>
+            <label htmlFor="description" className="block label-sm text-text-subtle mb-2">
+              Deskripsi
             </label>
             <textarea
               id="description"
@@ -191,23 +187,7 @@ export function CategoryForm({ mode, initialData, onSuccess, onCancel }: Categor
               rows={3}
               maxLength={500}
               disabled={submitting}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 resize-none transition-all"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="emoji" className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Emoji <span className="text-gray-400 font-normal">(opsional)</span>
-            </label>
-            <input
-              id="emoji"
-              type="text"
-              value={emoji}
-              onChange={(e) => setEmoji(e.target.value)}
-              placeholder="🔬"
-              maxLength={10}
-              disabled={submitting}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 transition-all"
+              className="w-full px-4 py-2.5 rounded border border-border bg-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all disabled:opacity-50 resize-none"
             />
           </div>
 

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 interface DeleteDialogProps {
   isOpen: boolean;
@@ -23,33 +23,33 @@ export function DeleteDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20"
       role="alertdialog"
       aria-modal="true"
       aria-labelledby="delete-dialog-title"
       aria-describedby="delete-dialog-desc"
     >
-      <Card className="w-full max-w-md p-0">
-        <div className="p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-6 h-6 text-red-500" />
+      <Card className="w-full max-w-md p-0 border-border">
+        <div className="p-8">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-12 h-12 rounded bg-error/10 flex items-center justify-center shrink-0 mb-6">
+              <AlertTriangle className="w-6 h-6 text-error" />
             </div>
             <div className="flex-1">
-              <h3 id="delete-dialog-title" className="text-lg font-bold text-gray-900 mb-1">
-                Hapus pertanyaan ini?
+              <h3 id="delete-dialog-title" className="text-title-md text-text-primary mb-2">
+                Hapus data ini?
               </h3>
-              <p id="delete-dialog-desc" className="text-sm text-gray-600 mb-3">
-                Tindakan ini tidak dapat dibatalkan. Pertanyaan akan dihapus permanently.
+              <p id="delete-dialog-desc" className="text-body-md text-text-muted mb-6">
+                Tindakan ini tidak dapat dibatalkan. Data akan dihapus secara permanen.
               </p>
-              <div className="p-3 rounded-xl bg-gray-50 border border-gray-200">
-                <p className="text-sm text-gray-700 line-clamp-2 italic">&ldquo;{questionText}&rdquo;</p>
+              <div className="p-4 rounded border border-border bg-surface-container">
+                <p className="text-sm text-text-primary italic line-clamp-2">&ldquo;{questionText}&rdquo;</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col-reverse sm:flex-row gap-3 px-6 py-4 border-t border-gray-100 bg-gray-50/50 rounded-b-2xl">
+        <div className="flex flex-col sm:flex-row gap-3 px-8 pb-8">
           <Button
             type="button"
             variant="secondary"

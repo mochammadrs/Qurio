@@ -1,8 +1,24 @@
 import { Question } from "@/context/types";
 
 /**
- * Database Soal untuk Qurio MVP
- * Total: 60 soal (20 per kategori)
+ * ⚠️ DEPRECATED: Hardcoded Questions (Legacy)
+ *
+ * File ini berisi soal-soal hardcoded yang TIDAK LAGI DIGUNAKAN untuk quiz gameplay.
+ * Quiz sekarang mengambil soal dari DATABASE via API endpoint /api/questions.
+ *
+ * File ini dipertahankan hanya untuk:
+ * - Reference legacy data (60 soal original) — dipakai oleh prisma/seed.ts
+ *
+ * DATABASE SEKARANG PUNYA: 165 soal
+ * - Agama: 40 soal
+ * - Sejarah: 40 soal
+ * - Pengetahuan Umum: 40 soal
+ * - Geografi: 15 soal
+ * - Bahasa & Sastra: 15 soal
+ * - Olahraga: 15 soal
+ *
+ * Untuk menambah soal baru, edit database langsung atau gunakan Prisma seed scripts.
+ * Utility functions shuffleQuestions & shuffleQuestionOptions pindah ke src/utils/shuffle.ts
  */
 
 export const questions: Question[] = [
@@ -432,44 +448,3 @@ export const questions: Question[] = [
     correctAnswer: 2,
   },
 ];
-
-/**
- * Helper function untuk filter soal by category
- */
-export function getQuestionsByCategory(category: "agama" | "sejarah" | "umum"): Question[] {
-  return questions.filter((q) => q.category === category);
-}
-
-/**
- * Helper function untuk shuffle array (Fisher-Yates algorithm)
- */
-export function shuffleQuestions(questions: Question[]): Question[] {
-  const shuffled = [...questions];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
-
-/**
- * Helper function untuk shuffle options dalam soal
- */
-export function shuffleQuestionOptions(question: Question): Question {
-  const optionsWithIndex = question.options.map((opt, idx) => ({ opt, idx }));
-  
-  // Shuffle options
-  for (let i = optionsWithIndex.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [optionsWithIndex[i], optionsWithIndex[j]] = [optionsWithIndex[j], optionsWithIndex[i]];
-  }
-  
-  // Find new correct answer index
-  const newCorrectIndex = optionsWithIndex.findIndex(item => item.idx === question.correctAnswer);
-  
-  return {
-    ...question,
-    options: optionsWithIndex.map(item => item.opt),
-    correctAnswer: newCorrectIndex,
-  };
-}

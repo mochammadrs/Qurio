@@ -1,12 +1,12 @@
 "use client";
 
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { GameState, Category, UserAnswer, GameResult } from "./types";
-import { getQuestionsByCategory, shuffleQuestions, shuffleQuestionOptions } from "@/data/questions";
+import { GameState, Category, UserAnswer, GameResult, Question } from "./types";
+import { shuffleQuestions, shuffleQuestionOptions } from "@/utils/shuffle";
 
 interface GameContextType extends GameState {
   startGame: (category: Category) => void;
-  submitAnswer: (answerIndex: number) => void;
+  submitAnswer: (answerIndex: number, timeSpent?: number) => void;
   nextQuestion: () => void;
   resetGame: () => void;
   getResult: () => GameResult;
@@ -34,21 +34,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
    * Start new game dengan kategori yang dipilih
    */
   const startGame = useCallback((category: Category) => {
-    // Get questions for selected category
-    const categoryQuestions = getQuestionsByCategory(category);
-    
-    // Shuffle questions
-    const shuffled = shuffleQuestions(categoryQuestions);
-    
-    // Take only 10 questions per game
-    const limitedQuestions = shuffled.slice(0, 10);
-    
-    // Shuffle options untuk setiap soal
-    const questionsWithShuffledOptions = limitedQuestions.map(q => shuffleQuestionOptions(q));
-    
     setGameState({
       category,
-      questions: questionsWithShuffledOptions,
+      questions: [],
       currentQuestionIndex: 0,
       score: 0,
       answers: [],
@@ -59,24 +47,60 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       categoryId: null,
     });
 
-    // Fetch categoryId untuk score saving (non-blocking)
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => {
-        const found = data.categories?.find(
-          (c: { slug: string }) => c.slug === category,
-        );
-        if (found) {
-          setGameState((prev) => ({ ...prev, categoryId: found.id }));
+    (async () => {
+      try {
+        const res = await fetch(`/api/questions?category=${category}`);
+        if (!res.ok) {
+          const errText = await res.text();
+          console.error("Fetch failed:", res.status, errText);
+          throw new Error("Failed to fetch questions");
         }
-      })
-      .catch(() => {});
+        
+        const data = await res.json();
+        const categoryQuestions: Question[] = data.questions;
+        
+        if (!categoryQuestions || categoryQuestions.length === 0) {
+          throw new Error("No questions found for this category");
+        }
+        
+        const shuffled = shuffleQuestions(categoryQuestions);
+        
+        const limitedQuestions = shuffled.slice(0, 10);
+        
+        const questionsWithShuffledOptions = limitedQuestions.map(q => shuffleQuestionOptions(q));
+        
+        setGameState((prev) => ({
+          ...prev,
+          questions: questionsWithShuffledOptions,
+        }));
+
+        fetch("/api/categories")
+          .then((res) => res.json())
+          .then((data) => {
+            const found = data.categories?.find(
+              (c: { slug: string }) => c.slug === category,
+            );
+            if (found) {
+              setGameState((prev) => ({ ...prev, categoryId: found.id }));
+            }
+          })
+          .catch(() => {});
+      } catch (error) {
+        console.error("Error starting game:", error);
+        setGameState((prev) => ({
+          ...prev,
+          saveError: "Gagal memuat soal. Silakan coba lagi.",
+          isGameActive: false,
+          questions: [],
+        }));
+      }
+    })();
   }, []);
 
   /**
    * Submit jawaban user
    */
-  const submitAnswer = useCallback((answerIndex: number) => {
+  const submitAnswer = useCallback((answerIndex: number, timeSpent?: number) => {
     if (!gameState.isGameActive || gameState.isGameFinished) return;
 
     const currentQuestion = gameState.questions[gameState.currentQuestionIndex];
@@ -86,6 +110,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       questionId: currentQuestion.id,
       selectedAnswer: answerIndex,
       isCorrect,
+      timeSpent,
     };
 
     setGameState((prev) => ({
@@ -96,20 +121,12 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   }, [gameState.isGameActive, gameState.isGameFinished, gameState.questions, gameState.currentQuestionIndex]);
 
   const saveScoreToDatabase = useCallback(async () => {
-    const { categoryId, questions, answers, score } = gameState;
+    const { categoryId, questions, answers } = gameState;
     if (!categoryId) return;
 
     setGameState((prev) => ({ ...prev, isSavingScore: true, saveError: null }));
 
     const totalQuestions = questions.length;
-    const correctAnswers = answers.filter((a) => a.isCorrect).length;
-    const wrongAnswers = totalQuestions - correctAnswers;
-    const percentage = (score / (totalQuestions * 10)) * 100;
-
-    let grade: "A" | "B" | "C";
-    if (percentage >= 80) grade = "A";
-    else if (percentage >= 60) grade = "B";
-    else grade = "C";
 
     try {
       const res = await fetch("/api/scores", {
@@ -117,20 +134,21 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           categoryId,
-          score,
           totalQuestions,
-          correctAnswers,
-          wrongAnswers,
-          percentage,
-          grade,
+          answers: answers.map((a) => ({
+            questionId: a.questionId,
+            selectedAnswer: a.selectedAnswer,
+            timeSpent: a.timeSpent,
+          })),
         }),
       });
 
       if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
         setGameState((prev) => ({
           ...prev,
           isSavingScore: false,
-          saveError: "Failed to save score",
+          saveError: errorData.error || "Gagal menyimpan skor",
         }));
         return;
       }
@@ -140,7 +158,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       setGameState((prev) => ({
         ...prev,
         isSavingScore: false,
-        saveError: "Failed to save score",
+        saveError: "Gagal menyimpan skor",
       }));
     }
   }, [gameState]);

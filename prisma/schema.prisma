@@ -78,6 +78,7 @@ model Question {
   question      String
   options       String[]
   correctAnswer Int
+  explanation   String?  @default("")
   difficulty    String   @default("medium")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

@@ -33,19 +33,14 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { categoryId, score, totalQuestions, correctAnswers, wrongAnswers, percentage, grade } = body;
+    const { categoryId, totalQuestions, answers } = body;
 
     const missingFields: string[] = [];
     if (!categoryId) missingFields.push("categoryId");
-    if (score === undefined || score === null) missingFields.push("score");
     if (!totalQuestions) missingFields.push("totalQuestions");
-    if (correctAnswers === undefined || correctAnswers === null)
-      missingFields.push("correctAnswers");
-    if (wrongAnswers === undefined || wrongAnswers === null)
-      missingFields.push("wrongAnswers");
-    if (percentage === undefined || percentage === null)
-      missingFields.push("percentage");
-    if (!grade) missingFields.push("grade");
+    if (!answers || !Array.isArray(answers) || answers.length === 0) {
+      missingFields.push("answers");
+    }
 
     if (missingFields.length > 0) {
       return NextResponse.json(
@@ -53,6 +48,41 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
+
+    const questionIds = answers.map((a: { questionId: string }) => a.questionId);
+    const dbQuestions = await prisma.question.findMany({
+      where: { id: { in: questionIds } },
+      select: { id: true, correctAnswer: true },
+    });
+
+    const questionMap = new Map(dbQuestions.map((q) => [q.id, q.correctAnswer]));
+    let correctAnswers = 0;
+
+    const validatedAnswers = answers.map((a: { questionId: string; selectedAnswer: number; timeSpent?: number }) => {
+      const correctAnswer = questionMap.get(a.questionId);
+      const isCorrect = correctAnswer !== undefined && a.selectedAnswer === correctAnswer;
+      if (isCorrect) correctAnswers++;
+      const timeSpent =
+        typeof a.timeSpent === "number" && Number.isFinite(a.timeSpent) && a.timeSpent >= 0
+          ? Math.round(a.timeSpent)
+          : 0;
+      return {
+        questionId: a.questionId,
+        selectedAnswer: a.selectedAnswer,
+        correctAnswer: correctAnswer ?? -1,
+        isCorrect,
+        timeSpent,
+      };
+    });
+
+    const score = correctAnswers * 10;
+    const wrongAnswers = totalQuestions - correctAnswers;
+    const percentage = Math.round((score / (totalQuestions * 10)) * 100);
+
+    let grade: "A" | "B" | "C";
+    if (percentage >= 80) grade = "A";
+    else if (percentage >= 60) grade = "B";
+    else grade = "C";
 
     const created = await prisma.score.create({
       data: {
@@ -64,6 +94,9 @@ export async function POST(request: NextRequest) {
         wrongAnswers,
         percentage,
         grade,
+        answers: {
+          create: validatedAnswers,
+        },
       },
       include: { category: true },
     });

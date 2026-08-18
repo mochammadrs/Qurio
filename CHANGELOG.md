@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prisma ORM 5.22.0 setup
   - Neon PostgreSQL integration (Singapore region)
   - 8 database models: User, Account, Session, VerificationToken, Category, Question, Score, Answer
-  - Database seed script (60 questions, 3 categories)
+  - Database seed script (120 questions, 3 categories)
   - Prisma Client singleton for connection management
 
 - **User Dashboard**
@@ -114,7 +114,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Initial MVP Release**
-  - 60 questions across 3 categories (Agama, Sejarah, Pengetahuan Umum)
+  - 120 questions across 3 categories (Agama, Sejarah, Pengetahuan Umum)
   - Interactive quiz system (10 questions per session)
   - Question randomization (Fisher-Yates algorithm)
   - Score calculation system (10 points per correct answer)

@@ -48,6 +48,19 @@ function validateQuestionBody(body: Record<string, unknown>) {
     errors.push("difficulty must be one of: easy, medium, hard");
   }
 
+  if (
+    body.explanation !== undefined &&
+    body.explanation !== null &&
+    typeof body.explanation !== "string"
+  ) {
+    errors.push("explanation must be a string");
+  } else if (
+    typeof body.explanation === "string" &&
+    body.explanation.length > 2000
+  ) {
+    errors.push("explanation must be at most 2000 characters");
+  }
+
   return errors;
 }
 
@@ -107,6 +120,10 @@ export async function POST(request: NextRequest) {
       data.difficulty = body.difficulty;
     }
 
+    if (body.explanation !== undefined && body.explanation !== null) {
+      data.explanation = body.explanation;
+    }
+
     const question = await prisma.question.create({
       data: data as {
         categoryId: string;
@@ -114,6 +131,7 @@ export async function POST(request: NextRequest) {
         options: string[];
         correctAnswer: number;
         difficulty?: string;
+        explanation?: string;
       },
       include: { category: true },
     });

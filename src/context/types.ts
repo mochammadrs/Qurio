@@ -2,7 +2,7 @@
  * TypeScript Types & Interfaces untuk Qurio
  */
 
-export type Category = "agama" | "sejarah" | "umum";
+export type Category = "agama" | "sejarah" | "umum" | "geografi" | "bahasa-sastra" | "olahraga";
 
 export interface Question {
   id: string;
@@ -10,6 +10,8 @@ export interface Question {
   question: string;
   options: string[];
   correctAnswer: number; // Index dari options (0-3)
+  explanation?: string;
+  difficulty?: string;
 }
 
 export interface GameState {

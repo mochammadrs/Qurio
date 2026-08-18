@@ -4,12 +4,12 @@ import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { X, AlertCircle } from "lucide-react";
+import { getCategoryIcon } from "@/utils/category-icons";
 
 interface Category {
   id: string;
   name: string;
   slug: string;
-  emoji: string;
 }
 
 interface Question {
@@ -19,6 +19,7 @@ interface Question {
   options: string[];
   correctAnswer: number;
   difficulty: string | null;
+  explanation?: string | null;
 }
 
 type FormMode = "create" | "edit";
@@ -50,6 +51,7 @@ export function QuestionForm({ mode, initialData, onSuccess, onCancel }: Questio
     initialData?.correctAnswer ?? 0,
   );
   const [difficulty, setDifficulty] = useState(initialData?.difficulty ?? "");
+  const [explanation, setExplanation] = useState(initialData?.explanation ?? "");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fetchingCategories, setFetchingCategories] = useState(true);
@@ -105,6 +107,7 @@ export function QuestionForm({ mode, initialData, onSuccess, onCancel }: Questio
         correctAnswer,
       };
       if (difficulty) body.difficulty = difficulty;
+      if (explanation.trim()) body.explanation = explanation.trim();
 
       const url =
         mode === "create"
@@ -135,59 +138,62 @@ export function QuestionForm({ mode, initialData, onSuccess, onCancel }: Questio
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20"
       role="dialog"
       aria-modal="true"
       aria-label={mode === "create" ? "Tambah pertanyaan" : "Edit pertanyaan"}
     >
-      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto p-0">
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900">
+      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto p-0 border-border">
+        <div className="flex items-center justify-between p-6 border-b border-border">
+          <h2 className="text-title-md text-text-primary">
             {mode === "create" ? "Tambah Pertanyaan" : "Edit Pertanyaan"}
           </h2>
           <button
             type="button"
             onClick={onCancel}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+            className="p-1 hover:bg-surface-container transition-colors rounded-sm"
             aria-label="Tutup form"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-text-muted" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-red-50 border border-red-200">
-              <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
-              <p className="text-sm text-red-700">{error}</p>
+            <div className="flex items-center gap-3 p-4 rounded border border-error/20 bg-error/5">
+              <AlertCircle className="w-5 h-5 text-error shrink-0" />
+              <p className="text-sm text-error font-medium">{error}</p>
             </div>
           )}
 
           <div>
-            <label htmlFor="category" className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Kategori <span className="text-red-500">*</span>
+            <label htmlFor="category" className="block label-sm text-text-subtle mb-2">
+              Kategori
             </label>
             <select
               id="category"
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
               disabled={fetchingCategories || submitting}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full px-4 py-2.5 rounded border border-border bg-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all disabled:opacity-50"
             >
               <option value="">
-                {fetchingCategories ? "Memuat kategori..." : "Pilih kategori"}
+                {fetchingCategories ? "Memuat..." : "Pilih kategori"}
               </option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>
-                  {cat.emoji} {cat.name}
-                </option>
-              ))}
+              {categories.map((cat) => {
+                const Icon = getCategoryIcon(cat.slug);
+                return (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                );
+              })}
             </select>
           </div>
 
           <div>
-            <label htmlFor="question" className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Pertanyaan <span className="text-red-500">*</span>
+            <label htmlFor="question" className="block label-sm text-text-subtle mb-2">
+              Pertanyaan
             </label>
             <textarea
               id="question"
@@ -197,11 +203,11 @@ export function QuestionForm({ mode, initialData, onSuccess, onCancel }: Questio
               rows={3}
               maxLength={charLimit}
               disabled={submitting}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 resize-none transition-all"
+              className="w-full px-4 py-2.5 rounded border border-border bg-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all disabled:opacity-50 resize-none"
             />
             <div className="flex justify-end mt-1">
               <span
-                className={`text-xs ${charCount > charLimit * 0.9 ? "text-red-500 font-semibold" : "text-gray-400"}`}
+                className={`text-xs ${charCount > charLimit * 0.9 ? "text-error" : "text-text-subtle"}`}
               >
                 {charCount}/{charLimit}
               </span>
@@ -209,26 +215,19 @@ export function QuestionForm({ mode, initialData, onSuccess, onCancel }: Questio
           </div>
 
           <fieldset className="space-y-3">
-            <legend className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Opsi Jawaban <span className="text-red-500">*</span>
+            <legend className="block label-sm text-text-subtle mb-3">
+              Opsi Jawaban
             </legend>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {OPTION_LABELS.map((label, i) => (
                 <div key={i}>
-                  <label
-                    htmlFor={`option-${i}`}
-                    className="block text-xs font-medium text-gray-500 mb-1"
-                  >
-                    Opsi {label}
-                  </label>
                   <input
-                    id={`option-${i}`}
                     type="text"
                     value={options[i]}
                     onChange={(e) => handleOptionChange(i, e.target.value)}
-                    placeholder={`Jawaban ${label}`}
+                    placeholder={`Opsi ${label}`}
                     disabled={submitting}
-                    className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 transition-all"
+                    className="w-full px-4 py-2.5 rounded border border-border bg-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all disabled:opacity-50"
                   />
                 </div>
               ))}
@@ -236,17 +235,17 @@ export function QuestionForm({ mode, initialData, onSuccess, onCancel }: Questio
           </fieldset>
 
           <fieldset>
-            <legend className="block text-sm font-semibold text-gray-700 mb-2">
-              Jawaban Benar <span className="text-red-500">*</span>
+            <legend className="block label-sm text-text-subtle mb-3">
+              Jawaban Benar
             </legend>
             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Pilih jawaban benar">
               {OPTION_LABELS.map((label, i) => (
                 <label
                   key={i}
-                  className={`flex items-center justify-center w-12 h-12 rounded-xl border-2 cursor-pointer transition-all font-bold text-sm ${
+                  className={`flex items-center justify-center w-12 h-12 rounded border cursor-pointer transition-all font-bold text-sm ${
                     correctAnswer === i
-                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                      : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                      ? "border-primary bg-surface-container text-primary"
+                      : "border-border bg-surface text-text-muted hover:border-text-muted"
                   }`}
                 >
                   <input
@@ -265,15 +264,15 @@ export function QuestionForm({ mode, initialData, onSuccess, onCancel }: Questio
           </fieldset>
 
           <div>
-            <label htmlFor="difficulty" className="block text-sm font-semibold text-gray-700 mb-1.5">
-              Tingkat Kesulitan <span className="text-gray-400 font-normal">(opsional)</span>
+            <label htmlFor="difficulty" className="block label-sm text-text-subtle mb-2">
+              Tingkat Kesulitan
             </label>
             <select
               id="difficulty"
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
               disabled={submitting}
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full px-4 py-2.5 rounded border border-border bg-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all disabled:opacity-50"
             >
               {DIFFICULTIES.map((d) => (
                 <option key={d.value} value={d.value}>
@@ -281,6 +280,27 @@ export function QuestionForm({ mode, initialData, onSuccess, onCancel }: Questio
                 </option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <label htmlFor="explanation" className="block label-sm text-text-subtle mb-2">
+              Penjelasan (opsional)
+            </label>
+            <textarea
+              id="explanation"
+              value={explanation}
+              onChange={(e) => setExplanation(e.target.value)}
+              placeholder="Penjelasan jawaban yang ditampilkan setelah kuis selesai..."
+              rows={3}
+              maxLength={2000}
+              disabled={submitting}
+              className="w-full px-4 py-2.5 rounded border border-border bg-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all disabled:opacity-50 resize-none"
+            />
+            <div className="flex justify-end mt-1">
+              <span className={`text-xs ${explanation.length > 1800 ? "text-error" : "text-text-subtle"}`}>
+                {explanation.length}/2000
+              </span>
+            </div>
           </div>
 
           <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">

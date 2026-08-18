@@ -2,18 +2,18 @@
 
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { QuestionForm } from "@/components/admin/QuestionForm";
 import { DeleteDialog } from "@/components/admin/DeleteDialog";
-import { Plus, Pencil, Trash2, BookOpen, AlertCircle } from "lucide-react";
+import { Plus, Pencil, Trash2, BookOpen, AlertCircle, Search, X } from "lucide-react";
+import { getCategoryIcon } from "@/utils/category-icons";
 
 interface Category {
   id: string;
   name: string;
   slug: string;
-  emoji: string;
 }
 
 interface Question {
@@ -38,6 +38,28 @@ export default function AdminQuestionsPage() {
   const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Question | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [difficultyFilter, setDifficultyFilter] = useState("all");
+
+  const uniqueCategories = useMemo(() => {
+    const map = new Map<string, Category>();
+    questions.forEach((q) => map.set(q.category.id, q.category));
+    return Array.from(map.values());
+  }, [questions]);
+
+  const filteredQuestions = useMemo(() => {
+    return questions.filter((q) => {
+      const matchesSearch =
+        !searchQuery ||
+        q.question.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory =
+        categoryFilter === "all" || q.category.id === categoryFilter;
+      const matchesDifficulty =
+        difficultyFilter === "all" || q.difficulty === difficultyFilter;
+      return matchesSearch && matchesCategory && matchesDifficulty;
+    });
+  }, [questions, searchQuery, categoryFilter, difficultyFilter]);
 
   const fetchQuestions = useCallback(async () => {
     setLoading(true);
@@ -115,30 +137,16 @@ export default function AdminQuestionsPage() {
     return map[d] ?? d;
   };
 
-  const difficultyColor = (d: string | null) => {
-    if (!d) return "text-gray-500 bg-gray-100";
-    const map: Record<string, string> = {
-      easy: "text-green-700 bg-green-100",
-      medium: "text-yellow-700 bg-yellow-100",
-      hard: "text-red-700 bg-red-100",
-    };
-    return map[d] ?? "text-gray-600 bg-gray-100";
-  };
-
   if (status === "loading" || (session && loading)) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="space-y-4">
-            <div className="h-10 bg-gray-200 rounded-2xl w-64 animate-pulse" />
-            <div className="h-12 bg-gray-200 rounded-2xl w-48 animate-pulse" />
-            <Card className="p-6 space-y-4">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="h-16 bg-gray-200 rounded-xl animate-pulse" />
-              ))}
-            </Card>
-          </div>
+      <div className="space-y-8">
+        <div className="space-y-4">
+          <div className="h-10 bg-surface-container rounded w-64 animate-pulse" />
+          <div className="h-6 bg-surface-container rounded w-48 animate-pulse" />
         </div>
+        <Card className="p-0 border-border overflow-hidden">
+          <div className="h-96 bg-surface-container animate-pulse" />
+        </Card>
       </div>
     );
   }
@@ -148,163 +156,196 @@ export default function AdminQuestionsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-heading font-bold text-gray-900 mb-2">
-                Kelola Pertanyaan
-              </h1>
-              <p className="text-gray-600">Tambah, edit, atau hapus pertanyaan kuis.</p>
-            </div>
-            <Button variant="primary" size="md" onClick={handleCreate} className="flex items-center gap-2">
-              <Plus className="w-5 h-5" />
-              <span className="font-semibold">Tambah Pertanyaan</span>
-            </Button>
-          </div>
-
-          {error && (
-            <Card className="p-4 border-red-200 bg-red-50 flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-500 shrink-0" />
-              <p className="text-red-700 text-sm">{error}</p>
-              <Button variant="secondary" size="sm" onClick={fetchQuestions} className="ml-auto">
-                Coba Lagi
-              </Button>
-            </Card>
-          )}
-
-          {questions.length === 0 && !error ? (
-            <Card className="p-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="w-8 h-8 text-purple-500" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Belum ada pertanyaan</h3>
-              <p className="text-gray-600 mb-6">
-                Klik &quot;Tambah Pertanyaan&quot; untuk membuat pertanyaan pertama.
-              </p>
-              <Button variant="primary" onClick={handleCreate} className="flex items-center gap-2 mx-auto">
-                <Plus className="w-5 h-5" />
-                <span className="font-semibold">Tambah Pertanyaan</span>
-              </Button>
-            </Card>
-          ) : (
-            <Card className="p-0 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full" role="table" aria-label="Daftar pertanyaan">
-                  <thead>
-                    <tr className="border-b border-gray-100 bg-gray-50/50">
-                      <th
-                        scope="col"
-                        className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                      >
-                        Pertanyaan
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                      >
-                        Kategori
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                      >
-                        Tingkat
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                      >
-                        Jawaban Benar
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                      >
-                        Aksi
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {questions.map((q) => (
-                      <tr key={q.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-4">
-                          <p className="text-sm font-medium text-gray-900 max-w-md truncate">
-                            {q.question}
-                          </p>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="inline-flex items-center gap-1.5 text-sm text-gray-700">
-                            <span aria-hidden="true">{q.category.emoji}</span>
-                            {q.category.name}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${difficultyColor(q.difficulty)}`}
-                          >
-                            {difficultyLabel(q.difficulty)}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-sm font-bold">
-                            {String.fromCharCode(65 + q.correctAnswer)}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center justify-end gap-2">
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => handleEdit(q)}
-                              aria-label={`Edit pertanyaan: ${q.question}`}
-                              className="flex items-center gap-1.5"
-                            >
-                              <Pencil className="w-4 h-4" />
-                              <span className="hidden sm:inline">Edit</span>
-                            </Button>
-                            <Button
-                              variant="danger"
-                              size="sm"
-                              onClick={() => setDeleteTarget(q)}
-                              aria-label={`Hapus pertanyaan: ${q.question}`}
-                              className="flex items-center gap-1.5"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                              <span className="hidden sm:inline">Hapus</span>
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
-          )}
+    <>
+      <div className="space-y-10">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+        <div>
+          <h1 className="text-headline-lg text-text-primary mb-2">Kelola Pertanyaan</h1>
+          <p className="text-body-md text-text-muted">Tambah, edit, atau hapus pertanyaan kuis.</p>
         </div>
+        <Button variant="primary" size="md" onClick={handleCreate} className="flex items-center gap-2">
+          <Plus className="w-5 h-5" />
+          Tambah Pertanyaan
+        </Button>
       </div>
 
-      {formMode && (
-        <QuestionForm
-          mode={formMode}
-          initialData={editingQuestion ?? undefined}
-          onSuccess={handleFormSuccess}
-          onCancel={() => {
-            setFormMode(null);
-            setEditingQuestion(null);
-          }}
-        />
+      {error && (
+        <div className="p-4 border border-error/20 bg-error/5 rounded-lg flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-error shrink-0" />
+          <p className="text-error text-sm font-medium">{error}</p>
+          <Button variant="ghost" size="sm" onClick={fetchQuestions} className="ml-auto text-error hover:bg-error/10">
+            Coba Lagi
+          </Button>
+        </div>
       )}
 
-      <DeleteDialog
-        isOpen={deleteTarget !== null}
-        onClose={() => setDeleteTarget(null)}
-        onConfirm={handleDeleteConfirm}
-        questionText={deleteTarget?.question ?? ""}
-        loading={deleteLoading}
-      />
+      {questions.length > 0 && (
+        <>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Cari pertanyaan..."
+              className="w-full pl-10 pr-10 py-2.5 rounded border border-border bg-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="px-4 py-2.5 rounded border border-border bg-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm"
+          >
+            <option value="all">Semua Kategori</option>
+            {uniqueCategories.map((cat) => {
+              const Icon = getCategoryIcon(cat.slug);
+              return (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              );
+            })}
+          </select>
+          <select
+            value={difficultyFilter}
+            onChange={(e) => setDifficultyFilter(e.target.value)}
+            className="px-4 py-2.5 rounded border border-border bg-surface focus:outline-none focus:ring-1 focus:ring-primary transition-all text-sm"
+          >
+            <option value="all">Semua Tingkat</option>
+            <option value="easy">Mudah</option>
+            <option value="medium">Sedang</option>
+            <option value="hard">Sulit</option>
+          </select>
+        </div>
+        {(searchQuery || categoryFilter !== "all" || difficultyFilter !== "all") && (
+          <p className="text-body-md text-text-muted">
+            Menampilkan {filteredQuestions.length} dari {questions.length} pertanyaan
+          </p>
+        )}
+        </>
+      )}
+
+      {questions.length === 0 && !error ? (
+        <Card className="p-16 text-center border-dashed">
+          <div className="w-16 h-16 rounded-lg bg-surface-container flex items-center justify-center mx-auto mb-6">
+            <BookOpen className="w-8 h-8 text-text-muted" />
+          </div>
+          <h3 className="title-md text-text-primary mb-2">Belum ada pertanyaan</h3>
+          <p className="text-body-md text-text-muted mb-8">
+            Klik &quot;Tambah Pertanyaan&quot; untuk membuat pertanyaan pertama.
+          </p>
+          <Button variant="primary" onClick={handleCreate} className="flex items-center gap-2 mx-auto">
+            <Plus className="w-5 h-5" />
+            Tambah Pertanyaan
+          </Button>
+        </Card>
+      ) : (
+        filteredQuestions.length === 0 ? (
+          <Card className="p-12 text-center">
+            <Search className="w-8 h-8 text-text-muted mx-auto mb-4" />
+            <h3 className="title-md text-text-primary mb-2">Tidak ada hasil</h3>
+            <p className="text-body-md text-text-muted">
+              Tidak ada pertanyaan yang cocok dengan filter Anda.
+            </p>
+          </Card>
+        ) : (
+        <Card className="p-0 border-border overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-border bg-surface-container">
+                  <th className="px-6 py-4 label-sm text-text-subtle uppercase tracking-wider">Pertanyaan</th>
+                  <th className="px-6 py-4 label-sm text-text-subtle uppercase tracking-wider">Kategori</th>
+                  <th className="px-6 py-4 label-sm text-text-subtle uppercase tracking-wider">Tingkat</th>
+                  <th className="px-6 py-4 label-sm text-text-subtle uppercase tracking-wider">Jawaban</th>
+                  <th className="px-6 py-4 label-sm text-text-subtle uppercase tracking-wider text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filteredQuestions.map((q) => (
+                  <tr key={q.id} className="hover:bg-surface-container/50 transition-colors">
+                    <td className="px-6 py-5">
+                      <p className="text-sm font-medium text-text-primary max-w-md truncate">
+                        {q.question}
+                      </p>
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="inline-flex items-center gap-2 text-sm text-text-primary">
+                        {(() => {
+                          const Icon = getCategoryIcon(q.category.slug);
+                          return <Icon className="w-4 h-4 text-primary" />;
+                        })()}
+                        {q.category.name}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="mono-xs px-2 py-1 bg-surface-container text-text-primary rounded">
+                        {difficultyLabel(q.difficulty)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5">
+                      <span className="inline-flex items-center justify-center w-7 h-7 rounded border border-border text-text-primary text-xs font-bold bg-surface">
+                        {String.fromCharCode(65 + q.correctAnswer)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-5">
+                      <div className="flex items-center justify-end gap-3">
+                        <button
+                          onClick={() => handleEdit(q)}
+                          className="text-text-muted hover:text-text-primary transition-colors p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 rounded"
+                          title="Edit"
+                          aria-label={`Edit pertanyaan: ${q.question.slice(0, 40)}`}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => setDeleteTarget(q)}
+                          className="text-text-muted hover:text-error transition-colors p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error focus-visible:ring-offset-1 rounded"
+                          title="Hapus"
+                          aria-label={`Hapus pertanyaan: ${q.question.slice(0, 40)}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      ))}
     </div>
+
+    {formMode && (
+      <QuestionForm
+        mode={formMode}
+        initialData={editingQuestion ?? undefined}
+        onSuccess={handleFormSuccess}
+        onCancel={() => {
+          setFormMode(null);
+          setEditingQuestion(null);
+        }}
+      />
+    )}
+
+    <DeleteDialog
+      isOpen={!!deleteTarget}
+      onClose={() => setDeleteTarget(null)}
+      onConfirm={handleDeleteConfirm}
+      questionText={deleteTarget?.question ?? ""}
+      loading={deleteLoading}
+    />
+
+    </>
   );
 }
