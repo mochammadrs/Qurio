@@ -1,0 +1,8 @@
+Total messages: 9 (Errors: 5, Warnings: 0)
+Returning 5 messages for level "error"
+
+[ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=kHRAxhrjIwbVImDpka79t' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_aaee43fe._.js:10116
+[ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=kHRAxhrjIwbVImDpka79t' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_aaee43fe._.js:10116
+[ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=kHRAxhrjIwbVImDpka79t' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_aaee43fe._.js:10116
+[ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=kHRAxhrjIwbVImDpka79t' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_aaee43fe._.js:10116
+[ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=kHRAxhrjIwbVImDpka79t' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_client_aaee43fe._.js:10116

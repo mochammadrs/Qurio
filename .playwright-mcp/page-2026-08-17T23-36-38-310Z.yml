@@ -1,0 +1,20 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - heading "Qurio" [level=1] [ref=e5]
+      - paragraph [ref=e6]: Masuk untuk melanjutkan
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - generic [ref=e9]: Email
+        - textbox "Email" [ref=e10]:
+          - /placeholder: nama@email.com
+      - button "Lanjutkan dengan Email" [ref=e11] [cursor=pointer]
+    - generic [ref=e12]: atau
+    - generic [ref=e16]:
+      - button "Masuk dengan Google" [ref=e17]
+      - button "Masuk dengan GitHub" [ref=e23]
+    - paragraph [ref=e27]:
+      - text: Belum punya akun?
+      - link "Daftar sekarang" [active] [ref=e28] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e34] [cursor=pointer]
+  - alert [ref=e38]

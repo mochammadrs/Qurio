@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Qurio - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-on-surface": "#f3eff7",
+                      "surface-dim": "#dcd9e0",
+                      "primary-fixed-dim": "#c3c0ff",
+                      "tertiary-fixed": "#ffdbc7",
+                      "on-primary": "#ffffff",
+                      "on-background": "#1b1b21",
+                      "error-container": "#ffdad6",
+                      "surface-container-high": "#eae7ef",
+                      "tertiary-container": "#5f2b00",
+                      "on-secondary-fixed": "#1a1c1c",
+                      "tertiary": "#3e1a00",
+                      "surface-container": "#f0ecf4",
+                      "on-error-container": "#93000a",
+                      "on-secondary": "#ffffff",
+                      "surface-tint": "#5654a8",
+                      "inverse-surface": "#303036",
+                      "surface-container-low": "#f6f2fa",
+                      "surface-variant": "#e5e1e9",
+                      "primary-fixed": "#e2dfff",
+                      "error": "#ba1a1a",
+                      "on-error": "#ffffff",
+                      "outline-variant": "#c8c5d3",
+                      "on-secondary-container": "#616362",
+                      "secondary": "#5d5f5e",
+                      "surface-bright": "#fcf8ff",
+                      "on-primary-fixed-variant": "#3e3c8f",
+                      "surface": "#fcf8ff",
+                      "secondary-container": "#dfe0df",
+                      "primary": "#1a146b",
+                      "on-tertiary-fixed": "#311300",
+                      "on-tertiary-container": "#de915e",
+                      "background": "#fcf8ff",
+                      "surface-container-highest": "#e5e1e9",
+                      "secondary-fixed": "#e2e2e2",
+                      "on-primary-fixed": "#100563",
+                      "on-tertiary": "#ffffff",
+                      "primary-container": "#312e81",
+                      "tertiary-fixed-dim": "#ffb688",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-fixed-variant": "#454747",
+                      "secondary-fixed-dim": "#c6c7c6",
+                      "outline": "#777682",
+                      "on-primary-container": "#9c9af4",
+                      "on-surface-variant": "#474651",
+                      "on-surface": "#1b1b21",
+                      "inverse-primary": "#c3c0ff",
+                      "on-tertiary-fixed-variant": "#70380b"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "base": "4px",
+                      "sm": "8px",
+                      "md": "16px",
+                      "gutter": "20px",
+                      "container-max": "1120px",
+                      "xl": "40px",
+                      "lg": "24px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "title-md": [
+                              "Inter"
+                      ],
+                      "mono-xs": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "title-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "mono-xs": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md text-body-md antialiased">
+<!-- TopNavBar -->
+<header class="bg-background border-b border-outline-variant/30 sticky top-0 z-50 w-full flex justify-between items-center px-gutter py-md max-w-container-max mx-auto">
+<div class="flex items-center gap-xl">
+<h1 class="font-headline-lg text-headline-lg md:font-headline-lg md:text-headline-lg font-bold text-primary">Qurio</h1>
+<nav class="hidden md:flex gap-lg">
+<a class="font-body-md text-body-md text-primary border-b-2 border-primary pb-1 transition-all scale-95 active:opacity-80" href="#">Agama</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors transition-all scale-95 active:opacity-80" href="#">Sejarah</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors transition-all scale-95 active:opacity-80" href="#">Umum</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="hidden md:block font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors">Masuk</button>
+<button class="text-primary hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow w-full max-w-container-max mx-auto px-gutter py-xl flex flex-col gap-xl">
+<!-- Header Section -->
+<section class="flex flex-col gap-sm max-w-2xl">
+<h2 class="font-display-lg text-display-lg md:font-display-lg md:text-display-lg text-on-background">Pilih Kategori</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Jelajahi pengetahuan melalui kurasi pertanyaan pilihan kami. Temukan pemahaman baru dalam setiap sesi.</p>
+</section>
+<!-- Bento Grid Categories -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-md md:gap-lg">
+<!-- Card 1: Agama -->
+<a class="group block h-full" href="#">
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-lg h-full flex flex-col justify-between transition-all hover:bg-surface-container-low hover:border-primary/50 relative overflow-hidden">
+<div class="flex justify-between items-start mb-xl relative z-10">
+<div class="bg-primary-container/10 p-sm rounded-lg text-primary">
+<span class="material-symbols-outlined text-3xl" data-icon="menu_book">menu_book</span>
+</div>
+<span class="font-mono-xs text-mono-xs bg-surface-container text-on-surface-variant px-sm py-xs rounded-full">120 Pertanyaan</span>
+</div>
+<div class="relative z-10">
+<h3 class="font-title-md text-title-md text-on-background group-hover:text-primary transition-colors mb-sm">Agama</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Eksplorasi mendalam mengenai ajaran, sejarah, dan nilai-nilai spiritual.</p>
+</div>
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+</div>
+</a>
+<!-- Card 2: Sejarah -->
+<a class="group block h-full" href="#">
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-lg h-full flex flex-col justify-between transition-all hover:bg-surface-container-low hover:border-primary/50 relative overflow-hidden">
+<div class="flex justify-between items-start mb-xl relative z-10">
+<div class="bg-primary-container/10 p-sm rounded-lg text-primary">
+<span class="material-symbols-outlined text-3xl" data-icon="account_balance">account_balance</span>
+</div>
+<span class="font-mono-xs text-mono-xs bg-surface-container text-on-surface-variant px-sm py-xs rounded-full">85 Pertanyaan</span>
+</div>
+<div class="relative z-10">
+<h3 class="font-title-md text-title-md text-on-background group-hover:text-primary transition-colors mb-sm">Sejarah</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Pelajari peristiwa masa lalu yang membentuk peradaban dan dunia hari ini.</p>
+</div>
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+</div>
+</a>
+<!-- Card 3: Umum -->
+<a class="group block h-full" href="#">
+<div class="bg-surface-container-lowest border border-outline-variant/30 rounded-xl p-lg h-full flex flex-col justify-between transition-all hover:bg-surface-container-low hover:border-primary/50 relative overflow-hidden">
+<div class="flex justify-between items-start mb-xl relative z-10">
+<div class="bg-primary-container/10 p-sm rounded-lg text-primary">
+<span class="material-symbols-outlined text-3xl" data-icon="public">public</span>
+</div>
+<span class="font-mono-xs text-mono-xs bg-surface-container text-on-surface-variant px-sm py-xs rounded-full">250+ Pertanyaan</span>
+</div>
+<div class="relative z-10">
+<h3 class="font-title-md text-title-md text-on-background group-hover:text-primary transition-colors mb-sm">Umum</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Uji wawasan Anda dengan berbagai topik pengetahuan dari seluruh dunia.</p>
+</div>
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+</div>
+</a>
+</section>
+<!-- Featured Insight / Callout -->
+<section class="mt-xl bg-surface-container-high border border-outline-variant/30 rounded-xl p-lg md:p-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-lg">
+<div class="max-w-xl">
+<h4 class="font-title-md text-title-md text-on-background mb-xs">Tantangan Harian</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Selesaikan 5 pertanyaan campuran setiap hari untuk menjaga ketajaman wawasan Anda.</p>
+</div>
+<button class="bg-primary text-on-primary font-label-sm text-label-sm px-md py-sm rounded-DEFAULT whitespace-nowrap hover:bg-primary-container hover:text-on-primary-container transition-colors">
+                Mulai Tantangan
+            </button>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low border-t border-outline-variant/30 w-full">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-gutter py-xl max-w-container-max mx-auto gap-md">
+<div class="flex items-center gap-sm">
+<span class="font-title-md text-title-md font-bold text-primary">Qurio</span>
+<span class="font-label-sm text-label-sm text-secondary">© 2024 Qurio Indonesia. Temukan Pengetahuan.</span>
+</div>
+<nav class="flex flex-wrap justify-center gap-md">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80" href="#">Tentang</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80" href="#">Privasi</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80" href="#">Syarat</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80" href="#">Kontak</a>
+</nav>
+</div>
+</footer>
+</body></html>

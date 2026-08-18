@@ -1,0 +1,78 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - link "Qurio" [ref=e5] [cursor=pointer]:
+          - /url: /
+        - navigation [ref=e7]:
+          - link "Agama" [ref=e8] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Sejarah" [ref=e9] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Umum" [ref=e10] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Geografi" [ref=e11] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Bahasa" [ref=e12] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Olahraga" [ref=e13] [cursor=pointer]:
+            - /url: /dashboard
+          - link "Leaderboard" [ref=e14] [cursor=pointer]:
+            - /url: /leaderboard
+        - generic [ref=e17]:
+          - button "Mode gelap" [ref=e18]
+          - link "Masuk" [ref=e21] [cursor=pointer]:
+            - /url: /login
+    - main [ref=e22]:
+      - generic [ref=e23]:
+        - heading "Where Curiosity Begins" [level=1] [ref=e24]
+        - paragraph [ref=e25]: Platform pembelajaran editorial minimalis yang dirancang untuk memperdalam pemahaman Anda melalui kuis dan asesmen terfokus.
+        - generic [ref=e26]:
+          - button "Mulai Sekarang" [ref=e27] [cursor=pointer]
+          - button "Pelajari Lebih Lanjut" [ref=e30] [cursor=pointer]
+      - generic [ref=e31]:
+        - heading "Eksplorasi Kategori" [level=2] [ref=e33]
+        - generic [ref=e36]:
+          - button [ref=e37] [cursor=pointer]:
+            - generic [ref=e44]:
+              - heading "Agama" [level=3] [ref=e45]
+              - paragraph [ref=e46]: Perdalam pengetahuan spiritual dan teks-teks suci melalui asesmen terstruktur.
+          - button [ref=e47] [cursor=pointer]:
+            - generic [ref=e54]:
+              - heading "Sejarah Indonesia" [level=3] [ref=e55]
+              - paragraph [ref=e56]: Telusuri jejak masa lalu Nusantara dengan pertanyaan komprehensif.
+          - button [ref=e57] [cursor=pointer]:
+            - generic [ref=e65]:
+              - heading "Pengetahuan Umum" [level=3] [ref=e66]
+              - paragraph [ref=e67]: Uji wawasan Anda terhadap dunia luas dalam format editorial yang bersih.
+          - button [ref=e68] [cursor=pointer]:
+            - generic [ref=e75]:
+              - heading "Geografi" [level=3] [ref=e76]
+              - paragraph [ref=e77]: Uji pengetahuan geografi Indonesia & dunia — dari bendungan hingga benua.
+          - button [ref=e78] [cursor=pointer]:
+            - generic [ref=e85]:
+              - heading "Bahasa & Sastra" [level=3] [ref=e86]
+              - paragraph [ref=e87]: Uji pemahaman bahasa, peribahasa, dan karya sastra klasik Indonesia.
+          - button [ref=e88] [cursor=pointer]:
+            - generic [ref=e99]:
+              - heading "Olahraga" [level=3] [ref=e100]
+              - paragraph [ref=e101]: Uji pengetahuan seputar aturan, tokoh, dan sejarah olahraga populer.
+      - generic [ref=e103]:
+        - heading "Desain Minimalis, Fokus Maksimal" [level=2] [ref=e104]
+        - paragraph [ref=e105]: Antarmuka kami menyingkirkan gangguan, menyisakan ruang bagi pikiran Anda untuk berkonsentrasi pada materi pembelajaran.
+        - generic [ref=e106] [cursor=pointer]: Lihat Cara Kerja
+    - contentinfo [ref=e119]:
+      - generic [ref=e121]:
+        - generic [ref=e122]: Qurio
+        - generic [ref=e123]:
+          - link "Tentang" [ref=e124] [cursor=pointer]:
+            - /url: "#"
+          - link "Privasi" [ref=e125] [cursor=pointer]:
+            - /url: "#"
+          - link "Syarat" [ref=e126] [cursor=pointer]:
+            - /url: "#"
+          - link "Kontak" [ref=e127] [cursor=pointer]:
+            - /url: "#"
+        - generic [ref=e128]: © 2026 Qurio Indonesia. Temukan Pengetahuan.
+  - button "Open Next.js Dev Tools" [ref=e134] [cursor=pointer]
+  - alert [ref=e138]

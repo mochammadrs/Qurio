@@ -1,0 +1,10 @@
+{
+  "name": "Qurio - Where Curiosity Begins",
+  "short_name": "Qurio",
+  "description": "Platform kuis interaktif yang mengubah proses belajar menjadi micro-game yang adiktif",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAFAF9",
+  "theme_color": "#312E81",
+  "icons": []
+}

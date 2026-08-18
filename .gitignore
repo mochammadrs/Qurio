@@ -91,3 +91,6 @@ pnpm-lock.yaml
 !MVP_QURIO_FINAL.md
 !CHANGELOG.md
 !QURIO_DEVELOPMENT_ROADMAP.md
+
+.vercel
+.env*

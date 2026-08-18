@@ -1,0 +1,4 @@
+- generic [active] [ref=f1e1]:
+  - paragraph [ref=f1e5]: Memuat...
+  - button "Open Next.js Dev Tools" [ref=f1e11] [cursor=pointer]
+  - alert [ref=f1e15]

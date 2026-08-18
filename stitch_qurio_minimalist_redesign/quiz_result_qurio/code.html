@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hasil Kuis - Qurio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f3eff7",
+                        "surface-dim": "#dcd9e0",
+                        "primary-fixed-dim": "#c3c0ff",
+                        "tertiary-fixed": "#ffdbc7",
+                        "on-primary": "#ffffff",
+                        "on-background": "#1b1b21",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#eae7ef",
+                        "tertiary-container": "#5f2b00",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "tertiary": "#3e1a00",
+                        "surface-container": "#f0ecf4",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "surface-tint": "#5654a8",
+                        "inverse-surface": "#303036",
+                        "surface-container-low": "#f6f2fa",
+                        "surface-variant": "#e5e1e9",
+                        "primary-fixed": "#e2dfff",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "outline-variant": "#c8c5d3",
+                        "on-secondary-container": "#616362",
+                        "secondary": "#5d5f5e",
+                        "surface-bright": "#fcf8ff",
+                        "on-primary-fixed-variant": "#3e3c8f",
+                        "surface": "#fcf8ff",
+                        "secondary-container": "#dfe0df",
+                        "primary": "#1a146b",
+                        "on-tertiary-fixed": "#311300",
+                        "on-tertiary-container": "#de915e",
+                        "background": "#fcf8ff",
+                        "surface-container-highest": "#e5e1e9",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-primary-fixed": "#100563",
+                        "on-tertiary": "#ffffff",
+                        "primary-container": "#312e81",
+                        "tertiary-fixed-dim": "#ffb688",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#454747",
+                        "secondary-fixed-dim": "#c6c7c6",
+                        "outline": "#777682",
+                        "on-primary-container": "#9c9af4",
+                        "on-surface-variant": "#474651",
+                        "on-surface": "#1b1b21",
+                        "inverse-primary": "#c3c0ff",
+                        "on-tertiary-fixed-variant": "#70380b"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "base": "4px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "gutter": "20px",
+                        "container-max": "1120px",
+                        "xl": "40px",
+                        "lg": "24px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "title-md": ["Inter"],
+                        "mono-xs": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "title-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "mono-xs": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- Supressing TopNavBar as this is a transactional/success screen -->
+<main class="flex-grow flex items-center justify-center p-gutter">
+<div class="max-w-3xl w-full mx-auto flex flex-col items-center text-center space-y-xl">
+<div class="space-y-sm">
+<p class="font-label-sm text-label-sm text-secondary uppercase tracking-wider">Hasil Kuis</p>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Sejarah Nusantara</h1>
+</div>
+<div class="relative w-full max-w-sm mx-auto aspect-square flex flex-col items-center justify-center rounded-full border border-outline-variant/30 bg-surface">
+<!-- Subtle decorative rings -->
+<div class="absolute inset-4 rounded-full border border-outline-variant/10"></div>
+<div class="absolute inset-8 rounded-full border border-outline-variant/10"></div>
+<div class="z-10 flex flex-col items-center space-y-sm">
+<span class="font-display-lg text-display-lg text-primary">80</span>
+<div class="h-px w-12 bg-outline-variant/50"></div>
+<span class="font-title-md text-title-md text-on-surface-variant">100</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-md w-full max-w-sm mx-auto">
+<div class="flex flex-col items-center p-md border border-outline-variant/30 rounded-lg bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-secondary mb-xs">Grade</span>
+<span class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">A-</span>
+</div>
+<div class="flex flex-col items-center p-md border border-outline-variant/30 rounded-lg bg-surface-container-low">
+<span class="font-label-sm text-label-sm text-secondary mb-xs">Akurasi</span>
+<span class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">80%</span>
+</div>
+</div>
+<div class="flex flex-col sm:flex-row gap-md w-full max-w-sm mx-auto pt-lg border-t border-outline-variant/30">
+<button class="flex-1 py-3 px-6 bg-primary text-on-primary font-label-sm text-label-sm rounded-lg hover:bg-primary-container transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">replay</span>
+                    Main Lagi
+                </button>
+<button class="flex-1 py-3 px-6 bg-transparent text-primary font-label-sm text-label-sm rounded-lg border border-primary hover:bg-surface-variant transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]">dashboard</span>
+                    Dashboard
+                </button>
+</div>
+</div>
+</main>
+<!-- Supressing Footer as this is a transactional/success screen -->
+</body></html>
